@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="fr" lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<title>Introduction</title>
+<link rel="stylesheet" type="text/css" href="styles/epub3.css"/>
+<link rel="stylesheet" type="text/css" href="styles/epub3-css3-only.css" media="(min-device-width: 0px)"/>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function(event, reader) {
+  if (!(reader = navigator.epubReadingSystem)) {
+    if (navigator.userAgent.indexOf(' calibre/') >= 0) reader = { name: 'calibre-desktop' };
+    else if (window.parent == window || !(reader = window.parent.navigator.epubReadingSystem)) return;
+  }
+  document.body.setAttribute('class', reader.name.toLowerCase().replace(/ /g, '-'));
+});
+</script>
+</head>
+<body>
+<section class="chapter" title="Introduction" epub:type="chapter" id="_introduction">
+<header>
+<div class="chapter-header">
+<h1 class="chapter-title"><small class="subtitle"><b>Introduction</b></small></h1>
+</div>
+</header>
+<p>Vous êtes sur le point de passer quelques heures de votre vie à lire des choses concernant Git.
+Prenons donc une minute pour expliquer ce que nous avons en magasin pour vous.
+Voici un résumé rapide des dix chapitres et des trois annexes de ce livre.</p>
+<p>Dans le <strong>chapitre 1</strong>, nous allons parler des systèmes de contrôle de version (VCS) et des bases de Git ‑ pas de détails techniques, juste ce qu&#8217;est Git, pourquoi il est apparu dans un monde déjà peuplé en VCS, ce qui le différencie et pourquoi tant de personnes l&#8217;utilisent.
+Puis, nous expliquerons comment le télécharger et le paramétrer lors de la première utilisation si vous ne l&#8217;avez pas déjà fait.</p>
+<p>Dans le <strong>chapitre 2</strong>, nous aborderons l&#8217;utilisation de base de Git – comment utiliser Git dans les 80 % des cas les plus communs.
+Après la lecture de ce chapitre, vous devriez être capable de cloner un dépôt, voir ce qui est arrivé dans l&#8217;historique du projet, modifier des fichiers et pousser vos contributions.
+Si ce livre devait prendre feu spontanément, vous devriez déjà manier Git suffisamment le temps d&#8217;aller chercher une autre copie.</p>
+<p>Le <strong>chapitre 3</strong> décrit le modèle de branches dans Git, ce qui ressort comme la fonctionnalité majeure de Git.
+Vous apprendrez ici ce qui range Git vraiment à part.
+À la fin de ce chapitre, il est probable que vous passiez un moment à vous demander comment vous avez pu vous en sortir avant de connaître le modèle de branches de Git.</p>
+<p>Le <strong>chapitre 4</strong> décrit Git sur le serveur.
+Ce chapitre intéressera ceux d&#8217;entre vous qui veulent installer Git dans votre organisation ou sur votre serveur personnel.
+ Nous explorerons différentes options d&#8217;hébergement si vous préférez confier la gestion à un tiers.</p>
+<p>Le <strong>chapitre 5</strong> couvrira en détail différentes formes de gestions distribuées et comment les mettre en œuvre avec Git.
+ À la fin de ce chapitre, vous devriez être en mesure de travailler facilement avec plusieurs dépôts distants, d&#8217;utiliser Git via le courriel et de jongler habilement avec des branches distantes multiples et des correctifs reçus.</p>
+<p>Le <strong>chapitre 6</strong> traite le service d&#8217;hébergement et l&#8217;outillage de GitHub.
+ Nous aborderons la création et la gestion de compte, la création et la gestion de dépôts Git, les méthodes de gestions courantes pour contribuer à un projet et pour accepter les contributions dans le vôtre, l&#8217;interface machine de GitHub et beaucoup de petits trucs pour vous simplifier la vie plus généralement.</p>
+<p>Le <strong>chapitre 7</strong> présente les commandes Git avancées.
+ Là, vous aborderez des thèmes tels que la maîtrise de l&#8217;effroyable commande <em>reset</em>, l&#8217;utilisation de la recherche binaire pour rechercher les bogues, l&#8217;édition de l&#8217;historique, les détails de la sélection de révisions et bien plus encore.
+ Ce chapitre achèvera votre formation à Git pour faire de vous un véritable maître.</p>
+<p>Le <strong>chapitre 8</strong> détaille la personnalisation de votre environnement Git.
+ Cela inclut le paramétrage de scripts de crochet pour faire respecter ou encourager des politiques personnalisées de gestion ainsi que l&#8217;utilisation de configurations d&#8217;environnement adaptées à votre manière de travailler.
+ Nous couvrirons aussi la création de scripts pour faire appliquer une politique personnalisée de validation des contributions.</p>
+<p>Le <strong>chapitre 9</strong> traite de Git et des autres VCS.
+ Ceci comprend l&#8217;utilisation de Git dans un environnement Subversion (SVN) et la conversion de projets depuis d&#8217;autres VCS vers Git.
+ Un grand nombre d&#8217;organisations utilisent encore SVN et ne sont pas prêtes de changer mais connaissant la puissance de Git, vous apprendrez comment l&#8217;utiliser si vous devez encore utiliser un serveur SVN.
+ Nous traiterons aussi comment importer des projets depuis quelques autres systèmes dans le cas où vous seriez parvenu à convaincre tout le monde de basculer.</p>
+<p>Le <strong>chapitre 10</strong> plonge dans les profondeurs troubles mais formidables des rouages de Git.
+ Armé de la connaissance et de la maîtrise puissante et gracieuse de Git, vous pourrez découvrir comment Git stocke ses objets, ce que le modèle d&#8217;objets est, les détails des fichiers pack, les protocoles serveur et plus encore.
+ Tout au long du livre, nous ferons référence à des points de ce chapitre dans l&#8217;éventualité d&#8217;un intérêt aux détails plus techniques mais si vous êtes comme nous et que vous préférez plonger dans les détails techniques avant tout, lisez le chapitre 10 en premier.
+ C&#8217;est à vous de choisir.</p>
+<p>Dans l'<strong>annexe A</strong>, nous détaillons quelques exemples d&#8217;utilisation de Git dans des environnements spécifiques.
+ Nous couvrons des interfaces utilisateurs graphiques et des environnements de programmation intégrés dans lesquels vous souhaiteriez pouvoir utiliser Git.
+ Si vous êtes intéressés par une vue d&#8217;ensemble de l&#8217;utilisation de Git dans votre shell, dans Visual Studio ou Eclipse, venez jeter un œil.</p>
+<p>Dans l'<strong>annexe B</strong>, nous explorons la création de scripts et d&#8217;extensions de Git grâce à des outils tels que libgit2 et JGit.
+ Si vous êtes intéressés par l&#8217;écriture d&#8217;outils rapides et complexes qui nécessitent des accès bas niveau dans Git, c&#8217;est ici que vous trouverez un panorama des options disponibles.</p>
+<p>Enfin, dans l'<strong>annexe C</strong>, nous faisons une revue de toutes les commandes principales de Git et pointons les endroits où elles sont abordées dans le livre et ce qu&#8217;elles permettent de faire.
+ Si vous voulez savoir où nous avons utilisé une commande Git spécifique dans le livre, c&#8217;est ici qu&#8217;il faut chercher.</p>
+<p>Maintenant, il est temps de commencer.</p>
+</section>
+</body>
+</html>

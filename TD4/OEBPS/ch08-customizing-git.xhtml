@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="fr" lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<title>Personnalisation de Git</title>
+<link rel="stylesheet" type="text/css" href="styles/epub3.css"/>
+<link rel="stylesheet" type="text/css" href="styles/epub3-css3-only.css" media="(min-device-width: 0px)"/>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function(event, reader) {
+  if (!(reader = navigator.epubReadingSystem)) {
+    if (navigator.userAgent.indexOf(' calibre/') >= 0) reader = { name: 'calibre-desktop' };
+    else if (window.parent == window || !(reader = window.parent.navigator.epubReadingSystem)) return;
+  }
+  document.body.setAttribute('class', reader.name.toLowerCase().replace(/ /g, '-'));
+});
+</script>
+</head>
+<body>
+<section class="chapter" title="Personnalisation de Git" epub:type="chapter" id="ch08-customizing-git">
+<header>
+<div class="chapter-header">
+<h1 class="chapter-title"><small class="subtitle"><b>Personnalisation</b> <b>de</b> <b>Git</b></small></h1>
+</div>
+</header>
+<div class="abstract" epub:type="preamble">
+<p>Jusqu&#8217;ici, nous avons traité les bases du fonctionnement et de l&#8217;utilisation de Git et introduit un certain nombre d&#8217;outils fournis par Git pour travailler plus facilement et plus efficacement.
+Dans ce chapitre, nous aborderons quelques opérations permettant d&#8217;utiliser Git de manière plus personnalisée en vous présentant quelques paramètres de configuration importants et le système d&#8217;interceptions.
+Grâce à ces outils, il devient enfantin de faire fonctionner Git exactement comme vous, votre société ou votre communauté en avez besoin.</p>
+</div>
+<section class="sect1" title="Configuration de Git">
+<h2 id="s_git_config">Configuration de Git</h2>
+<p>
+Comme vous avez pu l&#8217;entrevoir dans <a id="xref--ch01-introduction" href="ch01-introduction.xhtml" class="xref">Démarrage rapide</a>, vous pouvez spécifier les paramètres de configuration de Git avec la commande <code class="literal">git config</code>.
+Une des premières choses que vous avez faites a été de paramétrer votre nom et votre adresse de courriel :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global user.name <span style="font-style: italic">&quot;John Doe&quot;</span>
+<span style="font-weight: bold">$</span> git config --global user.email johndoe@example.com</code></pre>
+</figure>
+<p>À présent, vous allez apprendre quelques-unes des options similaires les plus intéressantes pour paramétrer votre usage de Git.</p>
+<p>Vous avez vu des détails de configuration simple de Git au premier chapitre, mais nous allons les réviser.
+Git utilise une série de fichiers de configuration pour déterminer son comportement selon votre personnalisation.
+Le premier endroit que Git visite est le fichier <code class="literal">/etc/gitconfig</code> qui contient des valeurs pour tous les utilisateurs du système et tous leurs dépôts.
+Si vous passez l&#8217;option <code class="literal">--system</code> à <code class="literal">git config</code>, il lit et écrit ce fichier.</p>
+<p>L&#8217;endroit suivant visité par Git est le fichier <code class="literal">~/.gitconfig</code> qui est spécifique à chaque utilisateur.
+Vous pouvez faire lire et écrire Git dans ce fichier au moyen de l&#8217;option <code class="literal">--global</code>.</p>
+<p>Enfin, Git recherche des valeurs de configuration dans le fichier de configuration du répertoire Git (<code class="literal">.git/config</code>) du dépôt en cours d&#8217;utilisation.
+Ces valeurs sont spécifiques à un unique dépôt.</p>
+<p>Chaque niveau surcharge le niveau précédent, ce qui signifie que les valeurs dans <code class="literal">.git/config</code> écrasent celles dans <code class="literal">/etc/gitconfig</code>.</p>
+<aside class="admonition note" title="Note" epub:type="note">
+<div class="content">
+<p>Ces fichiers de configuration Git sont des fichiers texte, donc vous pouvez positionner ces valeurs manuellement en éditant le fichier et en utilisant la syntaxe correcte, mais il reste généralement plus facile de lancer la commande <code class="literal">git config</code>.</p>
+</div>
+</aside>
+<section class="sect2" title="Configuration de base d&#8217;un client">
+<h3 id="_configuration_de_base_d_un_client">Configuration de base d&#8217;un client</h3>
+<p>Les options de configuration reconnues par Git tombent dans deux catégories : côté client et côté serveur.
+La grande majorité se situe côté client pour coller à vos préférences personnelles de travail.
+Parmi les tonnes d&#8217;options disponibles, seules les plus communes ou affectant significativement la manière de travailler seront couvertes.
+De nombreuses options ne s&#8217;avèrent utiles qu&#8217;en de rares cas et ne seront pas traitées.
+Pour voir la liste de toutes les options que votre version de Git reconnaît, vous pouvez lancer :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> man git-config</code></pre>
+</figure>
+<p>Cette commande affiche toutes les options disponibles avec quelques détails.
+Vous pouvez aussi trouver des informations de référence sur <a href="http://git-scm.com/docs/git-config.html" class="link">http://git-scm.com/docs/git-config.html</a>.</p>
+<section class="sect3" title="core.editor">
+<h4 id="_code_class_literal_core_editor_code"><code class="literal">core.editor</code></h4>
+<p>
+Par défaut, Git utilise votre éditeur par défaut (<code class="literal">$VISUAL</code> ou <code class="literal">$EDITOR</code>) ou se replie sur l&#8217;éditeur Vi pour la création et l&#8217;édition des messages de validation et d&#8217;étiquetage.
+Pour modifier ce programme par défaut pour un autre, vous pouvez utiliser le paramètre <code class="literal">core.editor</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global core.editor emacs</code></pre>
+</figure>
+<p>Maintenant, quel que soit votre éditeur par défaut, Git démarrera Emacs pour éditer les messages.</p>
+</section>
+<section class="sect3" title="commit.template">
+<h4 id="_code_class_literal_commit_template_code"><code class="literal">commit.template</code></h4>
+<p>
+Si vous réglez ceci sur le chemin d&#8217;un fichier sur votre système, Git utilisera ce fichier comme message par défaut quand vous validez.
+Par exemple, supposons que vous créiez un fichier modèle dans <code class="literal">$HOME/.gitmessage.txt</code> qui ressemble à ceci :</p>
+<figure class="listing">
+<pre class="source language-"><code>ligne de sujet
+
+description
+
+[ticket: X]</code></pre>
+</figure>
+<p>Pour indiquer à Git de l&#8217;utiliser pour le message par défaut qui apparaîtra dans votre éditeur quand vous lancerez <code class="literal">git commit</code>, réglez le paramètre de configuration <code class="literal">commit.template</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global commit.template ~/.gitmessage.txt
+<span style="font-weight: bold">$</span> git commit</code></pre>
+</figure>
+<p>Ainsi, votre éditeur ouvrira quelque chose ressemblant à ceci comme modèle de message de validation :</p>
+<figure class="listing">
+<pre class="source language-"><code>ligne de sujet
+
+description
+
+[ticket: X]
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD &lt;file&gt;..." to unstage)
+#
+# modified:   lib/test.rb
+#
+~
+~
+".git/COMMIT_EDITMSG" 14L, 297C</code></pre>
+</figure>
+<p>Si vous avez une règle de messages de validation, placez un modèle de cette règle sur votre système et configurez Git pour qu&#8217;il l&#8217;utilise par défaut, cela améliorera les chances que cette règle soit effectivement suivie.</p>
+</section>
+<section class="sect3" title="core.pager">
+<h4 id="_code_class_literal_core_pager_code"><code class="literal">core.pager</code></h4>
+<p>
+Le paramètre <code class="literal">core.pager</code> détermine quel <em>pager</em> est utilisé lorsque des pages de Git sont émises, par exemple lors d&#8217;un <code class="literal">log</code> ou d&#8217;un <code class="literal">diff</code>.
+Vous pouvez le fixer à <code class="literal">more</code> ou à votre <em>pager</em> favori (par défaut, il vaut <code class="literal">less</code>) ou vous pouvez le désactiver en fixant sa valeur à une chaîne vide :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global core.pager <span style="font-style: italic">&#39;&#39;</span></code></pre>
+</figure>
+<p>Si vous lancez cela, Git affichera la totalité du résultat de toutes les commandes d&#8217;une traite, quelle que soit sa longueur.</p>
+</section>
+<section class="sect3" title="user.signingkey">
+<h4 id="_code_class_literal_user_signingkey_code"><code class="literal">user.signingkey</code></h4>
+<p>
+Si vous faites des étiquettes annotées signées (comme décrit dans <a id="xref--ch07-git-tools--s_signing" href="ch07-git-tools.xhtml#s_signing" class="xref">Signer votre travail</a>), simplifiez-vous la vie en définissant votre clé GPG de signature en paramètre de configuration.
+Définissez votre ID de clé ainsi :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global user.signingkey &lt;gpg-key-id&gt;</code></pre>
+</figure>
+<p>Maintenant, vous pouvez signer vos étiquettes sans devoir spécifier votre clé à chaque fois que vous utilisez la commande <code class="literal">git tag</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git tag -s &lt;nom-étiquette&gt;</code></pre>
+</figure>
+</section>
+<section class="sect3" title="core.excludesfile">
+<h4 id="_code_class_literal_core_excludesfile_code"><code class="literal">core.excludesfile</code></h4>
+<p>
+Comme décrit dans <a id="xref--ch02-git-basics--s_ignoring" href="ch02-git-basics.xhtml#s_ignoring" class="xref">Ignorer des fichiers</a>, vous pouvez ajouter des patrons dans le fichier <code class="literal">.gitignore</code> de votre projet pour indiquer à Git de ne pas considérer certains fichiers comme non suivis ou pour éviter de les indexer lorsque vous lancez <code class="literal">git add</code> sur eux.</p>
+<p>Mais vous pouvez souhaiter dans quelques cas ignorer certains fichiers dans tous vos dépôts.
+Si votre ordinateur utilise Mac OS X, vous connaissez certainement les fichiers <code class="literal">.DS_Store</code>.
+Si votre éditeur préféré est Emacs ou Vim, vous connaissez sûrement aussi les fichiers qui se terminent par <code class="literal">~</code> ou <code class="literal">.swp</code>.</p>
+<p>Cette option vous permet d&#8217;écrire un fichier <code class="literal">.gitignore</code> global.
+Si vous créez un fichier <code class="literal">~/.gitignore_global</code> contenant ceci :</p>
+<figure class="listing">
+<pre class="source language-"><code>*~
+.*.swp
+.DS_Store</code></pre>
+</figure>
+<p>et que vous lancez <code class="literal">git config --global core.excludesfile ~/.gitignore_global</code>, Git ne vous importunera plus avec ces fichiers.</p>
+</section>
+<section class="sect3" title="help.autocorrect">
+<h4 id="_code_class_literal_help_autocorrect_code"><code class="literal">help.autocorrect</code></h4>
+<p>
+Si vous avez fait une faute de frappe en tapant une commande Git, il vous affiche quelque chose comme :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git chekcout master
+git : &#39;chekcout&#39; n&#39;est pas une commande git. Voir &#39;git --help&#39;.
+
+Vouliez-vous dire cela ?
+        checkout</code></pre>
+</figure>
+<p>Git essaie de deviner ce que vous avez voulu dire, mais continue de refuser de le faire.
+Si vous positionnez le paramètre <code class="literal">help.autocorrect</code> à 1, Git va réellement lancer cette commande à votre place :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git chekcout master
+ATTENTION : vous avez invoqué une commande Git nommée &#39;chekcout&#39; qui n&#39;existe pas.
+Continuons en supposant que vous avez voulu dire &#39;checkout&#39;
+dans 0.1 secondes automatiquement...</code></pre>
+</figure>
+<p>Notez l&#8217;histoire des « 0.1 secondes ».
+<code class="literal">help.autocorrect</code> est un fait un entier qui représente des dixièmes de seconde.
+Ainsi, si vous le réglez à 50, Git vous laissera 5 secondes pour changer d&#8217;avis avant de lancer la commande qu&#8217;il aura devinée.</p>
+</section>
+</section>
+<section class="sect2" title="Couleurs dans Git">
+<h3 id="_couleurs_dans_git">Couleurs dans Git</h3>
+<p>
+Git sait coloriser ses affichages dans votre terminal, ce qui peut faciliter le parcours visuel des résultats.
+Un certain nombre d&#8217;options peuvent vous aider à régler la colorisation à votre goût.</p>
+<section class="sect3" title="color.ui">
+<h4 id="_code_class_literal_color_ui_code"><code class="literal">color.ui</code></h4>
+<p>Git colorise automatiquement la plupart de ses affichages mais il existe une option globale pour désactiver ce comportement.
+Pour désactiver toute la colorisation par défaut, lancez ceci :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global color.ui false</code></pre>
+</figure>
+<p>La valeur par défaut est <code class="literal">auto</code>, ce qui colorise la sortie lorsque celle-ci est destinée à un terminal, mais élimine les codes de contrôle de couleur quand la sortie est redirigée dans un fichier ou l&#8217;entrée d&#8217;une autre commande.</p>
+<p>Vous pouvez aussi la régler à <code class="literal">always</code> (toujours) pour activer la colorisation en permanence.
+C&#8217;est une option rarement utile.
+Dans la plupart des cas, si vous tenez vraiment à coloriser vos sorties redirigées, vous pourrez passer le drapeau <code class="literal">--color</code> à la commande Git pour la forcer à utiliser les codes de couleur.
+Le réglage par défaut est donc le plus utilisé.</p>
+</section>
+<section class="sect3" title="color.*">
+<h4 id="_code_class_literal_color_code"><code class="literal">color.*</code></h4>
+<p>Si vous souhaitez être plus spécifique concernant les commandes colorisées, Git propose des paramètres de colorisation par action.
+Chacun peut être fixé à <code class="literal">true</code>, <code class="literal">false</code> ou <code class="literal">always</code>.</p>
+<figure class="listing">
+<pre class="source language-"><code>color.branch
+color.diff
+color.interactive
+color.status</code></pre>
+</figure>
+<p>De plus, chacun d&#8217;entre eux dispose d&#8217;un sous-ensemble de paramètres qui permettent de surcharger les couleurs pour des parties des affichages.
+Par exemple, pour régler les couleurs de méta-informations du diff avec une écriture en bleu gras (<em>bold</em> en anglais) sur fond noir :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global color.diff.meta <span style="font-style: italic">&quot;blue black bold&quot;</span></code></pre>
+</figure>
+<p>La couleur peut prendre les valeurs suivantes : <em>normal</em>, <em>black</em>, <em>red</em>, <em>green</em>, <em>yellow</em>, <em>blue</em>, <em>magenta</em>, <em>cyan</em> ou <em>white</em>.
+Si vous souhaitez ajouter un attribut de casse, les valeurs disponibles sont <em>bold</em> (gras), <em>dim</em> (léger), <em>ul</em> (<em>underlined</em>, souligné), <em>blink</em> (clignotant) et <em>reverse</em> (inversé).</p>
+</section>
+</section>
+<section class="sect2" title="Outils externes de fusion et de différence">
+<h3 id="s_external_merge_tools">Outils externes de fusion et de différence</h3>
+<p>
+Bien que Git ait une implémentation interne de diff que vous avez déjà utilisée, vous pouvez sélectionner à la place un outil externe.
+Vous pouvez aussi sélectionner un outil graphique pour la fusion et la résolution de conflit au lieu de devoir résoudre les conflits manuellement.
+Je démontrerai le paramétrage avec Perforce Merge Tool (P4Merge) pour visualiser vos différences et résoudre vos fusions parce que c&#8217;est un outil graphique agréable et gratuit.</p>
+<p>Si vous voulez l&#8217;essayer, P4Merge fonctionne sur tous les principaux systèmes d&#8217;exploitation.
+Dans cet exemple, je vais utiliser la forme des chemins usitée sur Mac et Linux.
+Pour Windows, vous devrez changer <code class="literal">/usr/local/bin</code> en un chemin d&#8217;exécution d&#8217;un programme de votre environnement.</p>
+<p>Pour commencer, téléchargez P4Merge depuis <a href="http://www.perforce.com/downloads/Perforce/" class="link">http://www.perforce.com/downloads/Perforce/</a>.
+Ensuite, il faudra mettre en place un script d&#8217;enrobage pour lancer les commandes.
+Je vais utiliser le chemin Mac pour l&#8217;exécutable ; dans d&#8217;autres systèmes, il résidera où votre binaire <code class="literal">p4merge</code> a été installé.
+Créez un script enveloppe nommé <code class="literal">extMerge</code> qui appelle votre binaire avec tous les arguments fournis :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> cat /usr/local/bin/extMerge
+<span style="font-weight: bold">#</span>!/bin/sh
+/Applications/p4merge.app/Contents/MacOS/p4merge $*</code></pre>
+</figure>
+<p>L&#8217;enveloppe diff s&#8217;assure que sept arguments ont été fournis et en passe deux à votre script de fusion.
+Par défaut, Git passe au programme de diff les arguments suivants :</p>
+<figure class="listing">
+<pre class="source language-"><code>chemin ancien-fichier ancien-hex ancien-mode nouveau-fichier nouveau-hex nouveau-mode</code></pre>
+</figure>
+<p>Comme seuls les arguments <code class="literal">ancien-fichier</code> et <code class="literal">nouveau-fichier</code> sont nécessaires, vous utilisez le script d&#8217;enveloppe pour passer ceux dont vous avez besoin.</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> cat /usr/local/bin/extDiff
+<span style="font-weight: bold">#</span>!/bin/sh
+[ $# -eq 7 ] &amp;&amp; /usr/local/bin/extMerge &quot;$2&quot; &quot;$5&quot;</code></pre>
+</figure>
+<p>Vous devez aussi vous assurer que ces fichiers sont exécutables :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> sudo chmod +x /usr/local/bin/extMerge
+<span style="font-weight: bold">$</span> sudo chmod +x /usr/local/bin/extDiff</code></pre>
+</figure>
+<p>À présent, vous pouvez régler votre fichier de configuration pour utiliser vos outils personnalisés de résolution de fusion et de différence.
+Pour cela, il faut un certain nombre de personnalisations : <code class="literal">merge.tool</code> pour indiquer à Git quelle stratégie utiliser, <code class="literal">mergetool.&lt;tool&gt;.cmd</code> pour spécifier comment lancer cette commande, <code class="literal">mergetool.&lt;tool&gt;.trustExitCode</code> pour indiquer à Git si le code de sortie du programme indique une résolution de fusion réussie ou non et <code class="literal">diff.external</code> pour indiquer à Git quelle commande lancer pour les différences.
+Ainsi, vous pouvez lancer les quatre commandes :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global merge.tool extMerge
+<span style="font-weight: bold">$</span> git config --global mergetool.extMerge.cmd <span style="font-weight: bold; font-style: italic">\</span>
+  <span style="font-style: italic">&#39;extMerge &quot;$BASE&quot; &quot;$LOCAL&quot; &quot;$REMOTE&quot; &quot;$MERGED&quot;&#39;</span>
+<span style="font-weight: bold">$</span> git config --global mergetool.trustExitCode false
+<span style="font-weight: bold">$</span> git config --global diff.external extDiff</code></pre>
+</figure>
+<p>ou vous pouvez éditer votre fichier <code class="literal">~/.gitconfig</code> pour y ajouter ces lignes :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span><span style="font-weight: bold">[merge]</span>
+  tool = <span style="font-style: italic">extMerge</span>
+<span style="font-weight: bold">[mergetool &quot;extMerge&quot;]</span>
+  cmd = <span style="font-style: italic">extMerge &quot;$BASE&quot; &quot;$LOCAL&quot; &quot;$REMOTE&quot; &quot;$MERGED&quot;</span>
+<span style="font-style: italic">  trustExitCode = false</span>
+<span style="font-weight: bold">[diff]</span>
+  external = <span style="font-style: italic">extDiff</span></code></pre>
+</figure>
+<p>Après avoir réglé tout ceci, si vous lancez des commandes de diff telles que celle-ci :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git diff 32d1776b1^ 32d1776b1</code></pre>
+</figure>
+<p>Au lieu d&#8217;obtenir la sortie du diff dans le terminal, Git lance P4Merge, ce qui ressemble à ceci :</p>
+<figure class="image">
+<div class="content">
+<img src="images/p4merge.png" alt="P4Merge."/>
+</div>
+<figcaption>Figure 1. P4Merge.</figcaption>
+</figure>
+<p>Si vous essayez de fusionner deux branches et créez des conflits de fusion, vous pouvez lancer la commande <code class="literal">git mergetool</code> qui démarrera P4Merge pour vous laisser résoudre les conflits au moyen d&#8217;un outil graphique.</p>
+<p>Le point agréable avec cette méthode d&#8217;enveloppe est que vous pouvez changer facilement d&#8217;outils de diff et de fusion.
+Par exemple, pour changer vos outils <code class="literal">extDiff</code> et <code class="literal">extMerge</code> pour une utilisation de l&#8217;outil KDiff3, il vous suffit d&#8217;éditer le fichier <code class="literal">extMerge</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> cat /usr/local/bin/extMerge
+<span style="font-weight: bold">#</span>!/bin/sh
+/Applications/kdiff3.app/Contents/MacOS/kdiff3 $*</code></pre>
+</figure>
+<p>À présent, Git va utiliser l&#8217;outil KDiff3 pour visualiser les différences et résoudre les conflits de fusion.</p>
+<p>Git est livré préréglé avec un certain nombre d&#8217;autres outils de résolution de fusion pour vous éviter d&#8217;avoir à gérer la configuration <code class="literal">cmd</code>.
+Pour obtenir une liste des outils qu&#8217;il supporte, essayez ceci :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git mergetool --tool-help
+&#39;git mergetool --tool=&lt;tool&gt;&#39; may be set to one of the following:
+        emerge
+        gvimdiff
+        gvimdiff2
+        opendiff
+        p4merge
+        vimdiff
+        vimdiff2
+
+The following tools are valid, but not currently available:
+        araxis
+        bc3
+        codecompare
+        deltawalker
+        diffmerge
+        diffuse
+        ecmerge
+        kdiff3
+        meld
+        tkdiff
+        tortoisemerge
+        xxdiff
+
+Some of the tools listed above only work in a windowed
+environment. If run in a terminal-only session, they will fail.</code></pre>
+</figure>
+<p>Si KDiff3 ne vous intéresse pas pour gérer les différences mais seulement pour la résolution de fusion et qu&#8217;il est présent dans votre chemin d&#8217;exécution, vous pouvez lancer :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global merge.tool kdiff3</code></pre>
+</figure>
+<p>Si vous lancez ceci au lieu de modifier les fichiers <code class="literal">extMerge</code> ou <code class="literal">extDiff</code>, Git utilisera KDiff3 pour les résolutions de fusion et l&#8217;outil diff normal de Git pour les différences.</p>
+</section>
+<section class="sect2" title="Formatage et espaces blancs">
+<h3 id="_formatage_et_espaces_blancs">Formatage et espaces blancs</h3>
+<p>
+Les problèmes de formatage et de blancs sont parmi les plus subtils et frustrants que les développeurs rencontrent lorsqu&#8217;ils collaborent, spécifiquement d&#8217;une plate-forme à l&#8217;autre.
+Il est très facile d&#8217;introduire des modifications subtiles de blancs lors de soumission de patchs ou d&#8217;autres modes de collaboration, car les éditeurs de texte les insèrent silencieusement ou les programmeurs Windows ajoutent des retours chariot à la fin des lignes qu&#8217;ils modifient.
+Git dispose de quelques options de configuration pour traiter ces problèmes.</p>
+<section class="sect3" title="core.autocrlf">
+<h4 id="_code_class_literal_core_autocrlf_code"><code class="literal">core.autocrlf</code></h4>
+<p>
+Si vous programmez vous-même sous Windows ou si vous utilisez un autre système d&#8217;exploitation mais devez travailler avec des personnes travaillant sous Windows, vous rencontrerez à un moment ou à un autre des problèmes de caractères de fin de ligne.
+Ceci est dû au fait que Windows utilise pour marquer les fins de ligne dans ses fichiers un caractère « retour chariot » (<em>carriage return</em>, CR) suivi d&#8217;un caractère « saut de ligne » (<em>line feed</em>, LF), tandis que Mac et Linux utilisent seulement le caractère « saut de ligne ».
+C&#8217;est un cas subtil mais incroyablement ennuyeux de problème généré par la collaboration inter plate-forme.</p>
+<p>Git peut gérer ce cas en convertissant automatiquement les fins de ligne CRLF en LF lorsque vous validez, et inversement lorsqu&#8217;il extrait des fichiers sur votre système.
+Vous pouvez activer cette fonctionnalité au moyen du paramètre <code class="literal">core.autocrlf</code>.
+Si vous avez une machine Windows, positionnez-le à <code class="literal">true</code>.
+Git convertira les fins de ligne de LF en CRLF lorsque vous extrairez votre code :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global core.autocrlf true</code></pre>
+</figure>
+<p>Si vous utilisez un système Linux ou Mac qui utilise les fins de ligne LF, vous ne souhaitez sûrement pas que Git les convertisse automatiquement lorsque vous extrayez des fichiers.
+Cependant, si un fichier contenant des CRLF est accidentellement introduit en version, vous souhaitez que Git le corrige.
+Vous pouvez indiquer à Git de convertir CRLF en LF lors de la validation mais pas dans l&#8217;autre sens en fixant <code class="literal">core.autocrlf</code> à <code class="literal">input</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global core.autocrlf input</code></pre>
+</figure>
+<p>Ce réglage devrait donner des fins de ligne en CRLF lors d&#8217;extraction sous Windows mais en LF sous Mac et Linux et dans le dépôt.</p>
+<p>Si vous êtes un programmeur Windows gérant un projet spécifique à Windows, vous pouvez désactiver cette fonctionnalité et forcer l&#8217;enregistrement des « retour chariot » dans le dépôt en réglant la valeur du paramètre à <code class="literal">false</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global core.autocrlf false</code></pre>
+</figure>
+</section>
+<section class="sect3" title="core.whitespace">
+<h4 id="_code_class_literal_core_whitespace_code"><code class="literal">core.whitespace</code></h4>
+<p>Git est paramétré par défaut pour détecter et corriger certains problèmes de blancs.
+Il peut rechercher six problèmes de blancs de base.
+La correction de trois problèmes est activée par défaut et peut être désactivée et celle des trois autres n&#8217;est pas activée par défaut mais peut être activée.</p>
+<p>Les trois activées par défaut sont <code class="literal">blank-at-eol</code> qui détecte les espaces en fin de ligne, <code class="literal">blank-at-eof</code> qui détecte les espaces en fin de fichier et <code class="literal">space-before-tab</code> qui recherche les espaces avant les tabulations au début d&#8217;une ligne.</p>
+<p>Les trois autres qui sont désactivées par défaut mais peuvent être activées sont <code class="literal">indent-with-non-tab</code> qui recherche des lignes qui commencent par des espaces au lieu de tabulations (contrôlé par l&#8217;option <code class="literal">tabwidth</code>), <code class="literal">tab-in-indent</code> qui recherche les tabulations dans la portion d&#8217;indentation d&#8217;une ligne et <code class="literal">cr-at-eol</code> qui indique à Git que les « retour chariot » en fin de ligne sont acceptés.</p>
+<p>Vous pouvez indiquer à Git quelle correction vous voulez activer en fixant <code class="literal">core.whitespace</code> avec les valeurs que vous voulez ou non, séparées par des virgules.
+Vous pouvez désactiver des réglages en les éliminant de la chaîne de paramétrage ou en les préfixant avec un <code class="literal">-</code>.
+Par exemple, si vous souhaitez activer tout sauf <code class="literal">cr-at-eol</code>, vous pouvez lancer ceci :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global core.whitespace <span style="font-weight: bold; font-style: italic">\</span>
+    trailing-space,space-before-tab,indent-with-non-tab</code></pre>
+</figure>
+<p>Git va détecter ces problèmes quand vous lancez une commande <code class="literal">git diff</code> et essayer de les coloriser pour vous permettre de les régler avant de valider.</p>
+<p>Il utilisera aussi ces paramètres pour vous aider quand vous appliquerez des patchs avec <code class="literal">git apply</code>.</p>
+<p>Quand vous appliquez des patchs, vous pouvez paramétrer Git pour qu&#8217;il vous avertisse s&#8217;il doit appliquer des patchs qui présentent les défauts de blancs :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git apply --whitespace=warn &lt;patch&gt;</code></pre>
+</figure>
+<p>Ou vous pouvez indiquer à Git d&#8217;essayer de corriger automatiquement le problème avant d&#8217;appliquer le patch :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git apply --whitespace=fix &lt;patch&gt;</code></pre>
+</figure>
+<p>Ces options s&#8217;appliquent aussi à <code class="literal">git rebase</code>.
+Si vous avez validé avec des problèmes de blancs mais n&#8217;avez pas encore poussé en amont, vous pouvez lancer un <code class="literal">rebase</code> avec l&#8217;option <code class="literal">--whitespace=fix</code> pour faire corriger à Git les erreurs de blancs pendant qu&#8217;il réécrit les patchs.</p>
+</section>
+</section>
+<section class="sect2" title="Configuration du serveur">
+<h3 id="_configuration_du_serveur">Configuration du serveur</h3>
+<p>Il n&#8217;y a pas autant d&#8217;options de configuration de Git côté serveur, mais en voici quelques unes intéressantes dont il est utile de prendre note.</p>
+<section class="sect3" title="receive.fsckObjects">
+<h4 id="_code_class_literal_receive_fsckobjects_code"><code class="literal">receive.fsckObjects</code></h4>
+<p>Git est capable de vérifier que tous les objets reçus pendant une poussée correspondent à leur somme de contrôle SHA-1 et qu&#8217;ils pointent sur des objets valides.
+Cependant, il ne le fait pas par défaut sur chaque poussée.
+C&#8217;est une opération relativement lourde qui peut énormément allonger les poussées selon la taille du dépôt ou de la poussée.
+Si vous voulez que Git vérifie la cohérence des objets à chaque poussée, vous pouvez le forcer en fixant le paramètre <code class="literal">receive.fsckObjects</code> à <code class="literal">true</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --system receive.fsckObjects true</code></pre>
+</figure>
+<p>Maintenant, Git va vérifier l&#8217;intégrité de votre dépôt avant que chaque poussée ne soit acceptée pour s&#8217;assurer que des clients défectueux (ou malicieux) n&#8217;introduisent pas des données corrompues.</p>
+</section>
+<section class="sect3" title="receive.denyNonFastForwards">
+<h4 id="_code_class_literal_receive_denynonfastforwards_code"><code class="literal">receive.denyNonFastForwards</code></h4>
+<p>Si vous rebasez des <em>commits</em> que vous avez déjà poussés, puis essayez de pousser à nouveau, ou inversement, si vous essayez de pousser un <em>commit</em> sur une branche distante qui ne contient pas le <em>commit</em> sur lequel la branche distante pointe, votre essai échouera.
+C&#8217;est généralement une bonne politique, mais dans le cas d&#8217;un rebasage, vous pouvez décider que vous savez ce que vous faites et forcer la mise à jour de la branche distante en ajoutant l&#8217;option <code class="literal">-f</code> à votre commande.</p>
+<p>Pour désactiver la possibilité de forcer la mise à jour des branches distantes autres qu&#8217;en avance rapide, réglez <code class="literal">receive.denyNonFastForwards</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --system receive.denyNonFastForwards true</code></pre>
+</figure>
+<p>Un autre moyen de faire consiste à utiliser des crochets côté-serveur, point qui sera abordé plus loin.
+Cette autre approche permet de réaliser des traitements plus complexes comme de refuser l&#8217;avance rapide seulement à un certain groupe d&#8217;utilisateurs.</p>
+</section>
+<section class="sect3" title="receive.denyDeletes">
+<h4 id="_code_class_literal_receive_denydeletes_code"><code class="literal">receive.denyDeletes</code></h4>
+<p>Un des contournements possible à la politique <code class="literal">denyNonFastForwards</code> consiste à simplement effacer la branche distante et à la repousser avec les nouvelles références.
+Pour interdire ceci, réglez <code class="literal">receive.denyDeletes</code> à <code class="literal">true</code> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --system receive.denyDeletes true</code></pre>
+</figure>
+<p>Ceci interdit la suppression de branches ou d&#8217;étiquettes.
+Aucun utilisateur n&#8217;en a le droit.
+Pour pouvoir effacer des branches distantes, vous devez effacer manuellement les fichiers de référence sur le serveur.
+Il existe aussi des moyens plus intéressants de gérer cette politique utilisateur par utilisateur au moyen des listes de contrôle d&#8217;accès, point qui sera abordé dans <a id="xref-s_an_example_git_enforced_policy" href="#s_an_example_git_enforced_policy" class="xref">Exemple de politique gérée par Git</a>.</p>
+</section>
+</section>
+</section>
+<section class="sect1" title="Attributs Git">
+<h2 id="_attributs_git">Attributs Git</h2>
+<p>
+Certains de ces réglages peuvent aussi s&#8217;appliquer sur un chemin, de telle sorte que Git ne les applique que sur un sous-répertoire ou un sous-ensemble de fichiers.
+Ces réglages par chemin sont appelés attributs Git et sont définis soit dans un fichier <code class="literal">.gitattributes</code> dans un répertoire (normalement la racine du projet), soit dans un fichier <code class="literal">.git/info/attributes</code> si vous ne souhaitez pas que le fichier de description des attributs fasse partie du projet.</p>
+<p>Les attributs permettent de spécifier des stratégies de fusion différentes pour certains fichiers ou répertoires dans votre projet, d&#8217;indiquer à Git la manière de calculer les différences pour certains fichiers non-texte, ou de faire filtrer à Git le contenu avant qu&#8217;il ne soit validé ou extrait.
+Dans ce chapitre, nous traiterons certains attributs applicables aux chemins et détaillerons quelques exemples de leur utilisation en pratique.</p>
+<section class="sect2" title="Fichiers binaires">
+<h3 id="_fichiers_binaires">Fichiers binaires</h3>
+<p>
+Les attributs Git permettent des trucs cool comme d&#8217;indiquer à Git quels fichiers sont binaires (dans les cas où il ne pourrait pas le deviner par lui-même) et de lui donner les instructions spécifiques pour les traiter.
+Par exemple, certains fichiers peuvent être générés par machine et impossible à traiter par diff, tandis que pour certains autres fichiers binaires, les différences peuvent être calculées.
+Nous détaillerons comment indiquer à Git l&#8217;un et l&#8217;autre.</p>
+<section class="sect3" title="Identification des fichiers binaires">
+<h4 id="_identification_des_fichiers_binaires">Identification des fichiers binaires</h4>
+<p>Certains fichiers ressemblent à des fichiers texte mais doivent en tout état de cause être traités comme des fichiers binaires.
+Par exemple, les projets Xcode sous Mac contiennent un fichier finissant en <code class="literal">.pbxproj</code>, qui est en fait un jeu de données JSON (format de données en texte JavaScript) enregistré par l&#8217;application EDI pour y sauver les réglages entre autres de compilation.
+Bien que ce soit techniquement un fichier texte en ASCII, il n&#8217;y a aucun intérêt à le gérer comme tel parce que c&#8217;est en fait une mini base de données.
+Il est impossible de fusionner les contenus si deux utilisateurs le modifient et les calculs de différence par défaut sont inutiles.
+Ce fichier n&#8217;est destiné qu&#8217;à être manipulé par un programme.
+En résumé, ce fichier doit être considéré comme un fichier binaire opaque.</p>
+<p>Pour indiquer à Git de traiter tous les fichiers <code class="literal">pbxproj</code> comme binaires, ajoutez la ligne suivante à votre fichier <code class="literal">.gitattributes</code> :</p>
+<figure class="listing">
+<pre class="source language-"><code>*.pbxproj binary</code></pre>
+</figure>
+<p>À présent, Git n&#8217;essaiera pas de convertir ou de corriger les problèmes des CRLF, ni de calculer ou d&#8217;afficher les différences pour ces fichiers quand vous lancez <code class="literal">git show</code> ou <code class="literal">git diff</code> sur votre projet.</p>
+</section>
+<section class="sect3" title="Comparaison de fichiers binaires">
+<h4 id="_comparaison_de_fichiers_binaires">Comparaison de fichiers binaires</h4>
+<p>Dans Git, vous pouvez utiliser la fonctionnalité des attributs pour comparer efficacement les fichiers binaires.
+Pour ce faire, indiquez à Git comment convertir vos données binaires en format texte qui peut être comparé via un diff normal.</p>
+<p>Comme c&#8217;est une fonctionnalité vraiment utile et peu connue, nous allons détailler certains exemples.
+Premièrement, nous utiliserons cette technique pour résoudre un des problèmes les plus ennuyeux de l&#8217;humanité : gérer en contrôle de version les documents Word.
+Tout le monde convient que Word est l&#8217;éditeur de texte le plus horrible qui existe, mais bizarrement, tout le monde persiste à l&#8217;utiliser.
+Si vous voulez gérer en version des documents Word, vous pouvez les coller dans un dépôt Git et les valider de temps à autre.
+Mais qu&#8217;est-ce que ça vous apporte ?
+Si vous lancez <code class="literal">git diff</code> normalement, vous verrez quelque chose comme :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git diff
+diff --git a/chapter1.docx b/chapter1.docx
+index 88839c4..4afcb7c 100644
+Binary files a/chapter1.docx and b/chapter1.docx differ</code></pre>
+</figure>
+<p>Vous ne pouvez pas comparer directement les versions à moins de les extraire et de les parcourir manuellement.
+En fait, vous pouvez faire la même chose plutôt bien en utilisant les attributs Git.
+Ajoutez la ligne suivante dans votre fichier <code class="literal">.gitattributes</code> :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>*.docx diff=<span style="font-style: italic">word</span></code></pre>
+</figure>
+<p>Cette ligne indique à Git que tout fichier correspondant au patron (<code class="literal">.docx</code>) doit utiliser le filtre <code class="literal">word</code> pour visualiser le diff des modifications.
+Qu&#8217;est-ce que le filtre « word » ?
+Nous devons le définir.
+Vous allez indiquer à Git d&#8217;utiliser le programme <code class="literal">docx2txt</code> qui a été écrit spécifiquement pour extraire le texte d&#8217;un document MS Word, qu&#8217;il pourra comparer correctement.</p>
+<p>Installez déjà <code class="literal">docx2text</code>.
+Vous pouvez le télécharger depuis <a href="http://docx2txt.sourceforge.net" class="link">http://docx2txt.sourceforge.net</a>.
+Suivez les instruction dans le fichier <code class="literal">INSTALL</code> pour le placer à un endroit où votre shell peut le trouver.
+Ensuite, écrivons un script qui convertit la sortie dans le format que Git comprend.
+Créez un fichier dans votre chemin d&#8217;exécution appelé <code class="literal">docx2txt</code> et ajoutez ce contenu :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">#</span>!/bin/bash
+docx2txt.pl $1 -</code></pre>
+</figure>
+<p>N&#8217;oubliez pas de faire un <code class="literal">chmod a+x</code> sur ce fichier.
+Finalement, vous pouvez configurer Git pour qu&#8217;il utilise ce script :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config diff.word.textconv docx2txt</code></pre>
+</figure>
+<p>À présent, Git sait que s&#8217;il essaie de faire un diff entre deux instantanés et qu&#8217;un des fichiers finit en <code class="literal">.docx</code>, il devrait faire passer ces fichiers par le filtre <code class="literal">word</code> défini comme le programme <code class="literal">docx2txt</code>.
+Cette méthode fait effectivement des jolies versions texte de vos fichiers Word avant d&#8217;essayer de les comparer.</p>
+<p>Voici un exemple.
+J&#8217;ai mis le chapitre 1 de ce livre dans Git, ajouté du texte à un paragraphe et sauvegardé le document.
+Puis, j&#8217;ai lancé <code class="literal">git diff</code> pour visualiser ce qui a changé :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git diff
+diff --git a/chapter1.docx b/chapter1.docx
+index 0b013ca..ba25db5 100644
+--- a/chapter1.docx
++++ b/chapter1.docx
+@@ -2,6 +2,7 @@
+ This chapter will be about getting started with Git. We will begin at the beginning by explaining some background on version control tools, then move on to how to get Git running on your system and finally how to get it setup to start working with. At the end of this chapter you should understand why Git is around, why you should use it and you should be all setup to do so.
+ 1.1. About Version Control
+ What is &quot;version control&quot;, and why should you care? Version control is a system that records changes to a file or set of files over time so that you can recall specific versions later. For the examples in this book you will use software source code as the files being version controlled, though in reality you can do this with nearly any type of file on a computer.
++Testing: 1, 2, 3.
+ If you are a graphic or web designer and want to keep every version of an image or layout (which you would most certainly want to), a Version Control System (VCS) is a very wise thing to use. It allows you to revert files back to a previous state, revert the entire project back to a previous state, compare changes over time, see who last modified something that might be causing a problem, who introduced an issue and when, and more. Using a VCS also generally means that if you screw things up or lose files, you can easily recover. In addition, you get all this for very little overhead.
+ 1.1.1. Local Version Control Systems
+ Many people&#39;s version-control method of choice is to copy files into another directory (perhaps a time-stamped directory, if they&#39;re clever). This approach is very common because it is so simple, but it is also incredibly error prone. It is easy to forget which directory you&#39;re in and accidentally write to the wrong file or copy over files you don&#39;t mean to.</code></pre>
+</figure>
+<p>Git m&#8217;indique succinctement que j&#8217;ai ajouté la chaîne « Testing: 1, 2, 3. », ce qui est correct.
+Ce n&#8217;est pas parfait – les modifications de formatage n&#8217;apparaissent pas – mais c&#8217;est efficace.</p>
+<p>Un autre problème intéressant concerne la comparaison de fichiers d&#8217;images.
+Une méthode consiste à faire passer les fichiers image à travers un filtre qui extrait les données EXIF, les méta-données enregistrées avec la plupart des formats d&#8217;image.
+Si vous téléchargez et installez le programme <code class="literal">exiftool</code>, vous pouvez l&#8217;utiliser pour convertir vos images en texte de méta-données de manière que le diff puisse au moins montrer une représentation textuelle des modifications pratiquées.
+Mettez la ligne suivante dans votre fichier <code class="literal">.gitattributes</code> :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>*.png diff=<span style="font-style: italic">exif</span></code></pre>
+</figure>
+<p>Configurez Git pour utiliser cet outil :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config diff.exif.textconv exiftool</code></pre>
+</figure>
+<p>Si vous remplacez une image dans votre projet et lancez <code class="literal">git diff</code>, vous verrez ceci :</p>
+<figure class="listing">
+<pre class="source language-diff"><code><span></span><span style="font-weight: bold">diff --git a/image.png b/image.png</span>
+<span style="font-weight: bold">index 88839c4..4afcb7c 100644</span>
+--- a/image.png
++++ b/image.png
+<span style="font-weight: bold">@@ -1,12 +1,12 @@</span>
+ ExifTool Version Number         : 7.74
+-File Size                       : 70 kB
+-File Modification Date/Time     : 2009:04:21 07:02:45-07:00
++File Size                       : 94 kB
++File Modification Date/Time     : 2009:04:21 07:02:43-07:00
+ File Type                       : PNG
+ MIME Type                       : image/png
+-Image Width                     : 1058
+-Image Height                    : 889
++Image Width                     : 1056
++Image Height                    : 827
+ Bit Depth                       : 8
+ Color Type                      : RGB with Alpha</code></pre>
+</figure>
+<p>Vous pouvez réaliser rapidement que la taille du fichier et les dimensions des images ont changé.</p>
+</section>
+</section>
+<section class="sect2" title="Expansion des mots-clés">
+<h3 id="s_keyword_expansion">Expansion des mots-clés</h3>
+<p>
+L&#8217;expansion de mots-clés dans le style de CVS ou de SVN est souvent une fonctionnalité demandée par les développeurs qui y sont habitués.
+Le problème principal de ce système avec Git est que vous ne pouvez pas modifier un fichier avec l&#8217;information concernant le <em>commit</em> après la validation parce que Git calcule justement la somme de contrôle sur son contenu.
+Cependant, vous pouvez injecter des informations textuelles dans un fichier au moment où il est extrait et les retirer avant qu&#8217;il ne soit ajouté à un <em>commit</em>.
+Les attributs Git vous fournissent deux manières de le faire.</p>
+<p>Premièrement, vous pouvez injecter automatiquement la somme de contrôle SHA-1 d&#8217;un blob dans un champ <code class="literal">$Id$</code> d&#8217;un fichier.
+Si vous positionnez cet attribut pour un fichier ou un ensemble de fichiers, la prochaine fois que vous extrairez cette branche, Git remplacera chaque champ avec le SHA-1 du blob.
+Il est à noter que ce n&#8217;est pas le SHA du <em>commit</em> mais celui du blob lui-même.</p>
+<p>Mettez la ligne suivante dans votre fichier <code class="literal">.gitattributes</code> :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>*.txt ident</code></pre>
+</figure>
+<p>Ajoutez une référence <code class="literal">$Id$</code> à un fichier de test :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> echo <span style="font-style: italic">&#39;$Id$&#39;</span> &gt; test.txt</code></pre>
+</figure>
+<p>À la prochaine extraction de ce fichier, Git injecte le SHA du blob :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> rm test.txt
+<span style="font-weight: bold">$</span> git checkout -- test.txt
+<span style="font-weight: bold">$</span> cat test.txt
+<span style="font-weight: bold">$</span>Id: 42812b7653c7b88933f8a9d6cad0ca16714b9bb3 $</code></pre>
+</figure>
+<p>Néanmoins, ce résultat n&#8217;a que peu d&#8217;intérêt.
+Si vous avez utilisé la substitution avec CVS ou Subversion, il est possible d&#8217;inclure la date.
+Le code SHA n&#8217;est pas des plus utiles car il ressemble à une valeur aléatoire et ne vous permet pas de distinguer si tel SHA est plus récent ou plus ancien que tel autre.</p>
+<p>Il apparaît que vous pouvez écrire vos propres filtres pour réaliser des substitutions dans les fichiers lors des validations/extractions.
+Ces filtres s&#8217;appellent « <em>clean</em> » et « <em>smudge</em> ».
+Dans le fichier <code class="literal">.gitattributes</code>, vous pouvez indiquer un filtre pour des chemins particuliers puis créer des scripts qui traiteront ces fichiers avant qu&#8217;ils soient extraits (« <em>smudge</em> », voir <a id="xref-filters_a" href="#filters_a" class="xref">Le filtre « <em>smudge</em> » est lancé lors d&#8217;une extraction.</a>) et juste avant qu&#8217;ils soient validés (« <em>clean</em> », voir <a id="xref-filters_b" href="#filters_b" class="xref">Le filtre « <em>clean</em> » est lancé lorsque les fichiers sont indexés.</a>).
+Ces filtres peuvent servir à faire toutes sortes de choses attrayantes.</p>
+<figure id="filters_a" class="image">
+<div class="content">
+<img src="images/smudge.png" alt="Le filtre « _smudge_ » est lancé lors d'une extraction."/>
+</div>
+<figcaption>Figure 2. Le filtre « <em>smudge</em> » est lancé lors d&#8217;une extraction.</figcaption>
+</figure>
+<figure id="filters_b" class="image">
+<div class="content">
+<img src="images/clean.png" alt="Le filtre « _clean_ » est lancé lorsque les fichiers sont indexés."/>
+</div>
+<figcaption>Figure 3. Le filtre « <em>clean</em> » est lancé lorsque les fichiers sont indexés.</figcaption>
+</figure>
+<p>Le message de validation d&#8217;origine pour cette fonctionnalité donne un exemple simple permettant de passer tout votre code C par le programme <code class="literal">indent</code> avant de valider.
+Vous pouvez le faire en réglant l&#8217;attribut <code class="literal">filter</code> dans votre fichier <code class="literal">.gitattributes</code> pour filtrer les fichiers <code class="literal">*.c</code> avec le filtre « indent » :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>*.c filter=<span style="font-style: italic">indent</span></code></pre>
+</figure>
+<p>Ensuite, indiquez à Git ce que le filtre « indent » fait sur <em>smudge</em> et <em>clean</em> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global filter.indent.clean indent
+<span style="font-weight: bold">$</span> git config --global filter.indent.smudge cat</code></pre>
+</figure>
+<p>Dans ce cas, quand vous validez des fichiers qui correspondent à <code class="literal">*.c</code>, Git les fera passer par le programme <code class="literal">indent</code> avant de les valider et les fera passer par le programme <code class="literal">cat</code> avant de les extraire sur votre disque.
+Le programme <code class="literal">cat</code> ne  fait rien : il se contente de régurgiter les données telles qu&#8217;il les a lues.
+Cette combinaison filtre effectivement tous les fichiers de code source C par <code class="literal">indent</code> avant leur validation.</p>
+<p>Un autre exemple intéressant fournit l&#8217;expansion du mot-clé <code class="literal">$Date$</code> dans le style RCS.
+Pour le réaliser correctement, vous avez besoin d&#8217;un petit script qui prend un nom de fichier, calcule la date de la dernière validation pour le projet et l&#8217;insère dans le fichier.
+Voici un petit script Ruby qui le fait :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-style: italic">#! /usr/bin/env ruby</span>
+data = STDIN.read
+last_date = <span style="font-style: italic">`git log --pretty=format:&quot;%ad&quot; -1`</span>
+puts data.gsub(<span style="font-style: italic">&#39;$Date$&#39;</span>, <span style="font-style: italic">&#39;$Date: &#39;</span> + last_date.to_s + <span style="font-style: italic">&#39;$&#39;</span>)</code></pre>
+</figure>
+<p>Tout ce que le script fait, c&#8217;est récupérer la date de la dernière validation à partir de la commande <code class="literal">git log</code>, la coller dans toutes les chaînes <code class="literal">$Date$</code> qu&#8217;il trouve et réécrire le résultat.
+Ce devrait être simple dans n&#8217;importe quel langage avec lequel vous êtes à l&#8217;aise.
+Appelez ce fichier <code class="literal">expand_date</code> et placez-le dans votre chemin.
+À présent, il faut paramétrer un filtre dans Git (appelons le <code class="literal">dater</code>) et lui indiquer d&#8217;utiliser le filtre <code class="literal">expand_date</code> en tant que <em>smudge</em> sur les fichiers à extraire.
+Nous utiliserons une expression Perl pour nettoyer lors d&#8217;une validation :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config filter.dater.smudge expand_date
+<span style="font-weight: bold">$</span> git config filter.dater.clean <span style="font-style: italic">&#39;perl -pe &quot;s/\\\$Date[^\\\$]*\\\$/\\\$Date\\\$/&quot;&#39;</span></code></pre>
+</figure>
+<p>Cette commande Perl extrait tout ce qu&#8217;elle trouve dans une chaîne <code class="literal">$Date$</code> et la réinitialise.
+Le filtre prêt, on peut le tester en écrivant le mot-clé <code class="literal">$Date$</code> dans un fichier, puis en créant un attribut Git pour ce fichier qui fait référence au nouveau filtre et en créant un fichier avec votre mot-clé <code class="literal">$Date$</code> :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>date*.txt filter=<span style="font-style: italic">dater</span></code></pre>
+</figure>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> echo <span style="font-style: italic">&#39;# $Date$&#39;</span> &gt; date_test.txt</code></pre>
+</figure>
+<p>Si vous validez ces modifications et extrayez le fichier à nouveau, vous remarquez le mot-clé correctement substitué :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git add date_test.txt .gitattributes
+<span style="font-weight: bold">$</span> git commit -m <span style="font-style: italic">&quot;Testing date expansion in Git&quot;</span>
+<span style="font-weight: bold">$</span> rm date_test.txt
+<span style="font-weight: bold">$</span> git checkout date_test.txt
+<span style="font-weight: bold">$</span> cat date_test.txt
+<span style="font-weight: bold">#</span> $Date: Tue Apr 21 07:26:52 2009 -0700$</code></pre>
+</figure>
+<p>Vous pouvez voir à quel point cette technique peut être puissante pour des applications personnalisées.
+Il faut rester néanmoins vigilant car le fichier <code class="literal">.gitattributes</code> est validé et inclus dans le projet tandis que le gestionnaire (ici, <code class="literal">dater</code>) ne l&#8217;est pas.
+Du coup, ça ne marchera pas partout.
+Lorsque vous créez ces filtres, ils devraient pouvoir avoir un mode dégradé qui n&#8217;empêche pas le projet de fonctionner.</p>
+</section>
+<section class="sect2" title="Export d&#8217;un dépôt">
+<h3 id="_export_d_un_dépôt">Export d&#8217;un dépôt</h3>
+<p>
+Les données d&#8217;attribut Git permettent aussi de faire des choses intéressantes quand vous exportez une archive du projet.</p>
+<section class="sect3" title="export-ignore">
+<h4 id="_code_class_literal_export_ignore_code"><code class="literal">export-ignore</code></h4>
+<p>Vous pouvez dire à Git de ne pas exporter certains fichiers ou répertoires lors de la génération d&#8217;archive.
+S&#8217;il y a un sous-répertoire ou un fichier que vous ne souhaitez pas inclure dans le fichier archive mais que vous souhaitez extraire dans votre projet, vous pouvez indiquer ce fichier via l&#8217;attribut <code class="literal">export-ignore</code>.</p>
+<p>Par exemple, disons que vous avez des fichiers de test dans le sous-répertoire <code class="literal">test/</code> et que ce n&#8217;est pas raisonnable de les inclure dans l&#8217;archive d&#8217;export de votre projet.
+Vous pouvez ajouter la ligne suivante dans votre fichier d&#8217;attribut Git :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>test/ export-ignore</code></pre>
+</figure>
+<p>À présent, quand vous lancez <code class="literal">git archive</code> pour créer une archive <code class="literal">tar</code> de votre projet, ce répertoire ne sera plus inclus dans l&#8217;archive.</p>
+</section>
+<section class="sect3" title="export-subst">
+<h4 id="_code_class_literal_export_subst_code"><code class="literal">export-subst</code></h4>
+<p>Quand vous exportez des fichiers pour un déploiement, vous pouvez appliquer le formatage de <code class="literal">git log</code> et l&#8217;expansion de mot-clés à des portions choisies de fichiers marquées avec l&#8217;attribut <code class="literal">export-subst</code>.</p>
+<p>Par exemple, si vous voulez inclure un fichier appelé <code class="literal">LAST_COMMIT</code> dans votre projet et y injecter automatiquement la date de dernière validation lorsque <code class="literal">git archive</code> est lancé, vous pouvez définir vos fichiers <code class="literal">.gitattributes</code> et <code class="literal">LAST_COMMIT</code> comme ceci :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>LAST_COMMIT export-subs</code></pre>
+</figure>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> echo <span style="font-style: italic">&#39;Last commit date: $Format:%cd by %aN$&#39;</span> &gt; LAST_COMMIT
+<span style="font-weight: bold">$</span> git add LAST_COMMIT .gitattributes
+<span style="font-weight: bold">$</span> git commit -am <span style="font-style: italic">&#39;adding LAST_COMMIT file for archives&#39;</span></code></pre>
+</figure>
+<p>Quand vous lancez <code class="literal">git archive</code>, le contenu de ce fichier inclus dans l&#8217;archive ressemblera à ceci :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git archive HEAD | tar xCf ../test-deploiement -
+<span style="font-weight: bold">$</span> cat ../test-deploiement/LAST_COMMIT
+Last commit date: Tue Apr 21 08:38:48 2009 -0700 by Scott Chacon</code></pre>
+</figure>
+<p>Les substitutions peuvent inclure par exemple le message de validation et n&#8217;importe quelle note git, et git log peut faire du simple retour à la ligne :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> echo <span style="font-style: italic">&#39;$Format:Last commit: %h by %aN at %cd%n%+w(76,6,9)%B$&#39;</span> &gt; LAST_COMMIT
+<span style="font-weight: bold">$</span> git commit -am <span style="font-style: italic">&#39;export-subst uses git log&#39;</span><span style="font-weight: bold; font-style: italic">\&#39;</span><span style="border: 1px solid #FF0000">&#39;</span>s custom formatter
+
+git archive uses git log&#39;\&#39;&#39;s `pretty=format:` processor
+directly, and strips the surrounding `$Format:` and `$`
+markup from the output.
+&#39;
+<span style="font-weight: bold">$</span> git archive @ | tar xfO - LAST_COMMIT
+Last commit: 312ccc8 by Jim Hill at Fri May 8 09:14:04 2015 -0700
+       export-subst uses git log&#39;s custom formatter
+
+         git archive uses git log&#39;s `pretty=format:` processor directly, and
+         strips the surrounding `$Format:` and `$` markup from the output.</code></pre>
+</figure>
+<p>L&#8217;archive résultante est appropriée pour le travail de déploiement, mais comme n&#8217;importe quelle archive exportée, elle n&#8217;est pas appropriée pour continuer un travail de développement.</p>
+</section>
+</section>
+<section class="sect2" title="Stratégies de fusion">
+<h3 id="_stratégies_de_fusion">Stratégies de fusion</h3>
+<p>
+Vous pouvez aussi utiliser les attributs Git pour indiquer à Git d&#8217;utiliser des stratégies de fusion différenciées pour des fichiers spécifiques dans votre projet.
+Une option très utile est d&#8217;indiquer à Git de ne pas essayer de fusionner des fichiers spécifiques quand ils rencontrent des conflits mais plutôt d&#8217;utiliser prioritairement votre version du fichier.</p>
+<p>C&#8217;est très utile si une branche de votre projet a divergé ou s&#8217;est spécialisée, mais que vous souhaitez pouvoir fusionner les modifications qu&#8217;elle porte et vous voulez ignorer certains fichiers.
+Supposons que vous avez un fichier de paramètres de base de données appelé <code class="literal">database.xml</code> différent sur deux branches et vous voulez les fusionner dans votre autre branche sans corrompre le fichier de base de données.
+Vous pouvez déclarer un attribut comme ceci :</p>
+<figure class="listing">
+<pre class="source language-ini"><code><span></span>database.xml merge=<span style="font-style: italic">ours</span></code></pre>
+</figure>
+<p>Et définir une bête stratégie de fusion <code class="literal">ours</code> avec :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git config --global merge.ours.driver true</code></pre>
+</figure>
+<p>Si vous fusionnez dans une autre branche, plutôt que de rencontrer des conflits de fusion avec le fichier <code class="literal">database.xml</code>, vous verrez quelque chose comme :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git merge topic
+Auto-merging database.xml
+Merge made by recursive.</code></pre>
+</figure>
+<p>Dans ce cas, <code class="literal">database.xml</code> reste dans l&#8217;état d&#8217;origine, quoi qu&#8217;il arrive.</p>
+</section>
+</section>
+<section class="sect1" title="Crochets Git">
+<h2 id="s_git_hooks">Crochets Git</h2>
+<p>
+Comme de nombreux autres systèmes de gestion de version, Git dispose d&#8217;un moyen de lancer des scripts personnalisés quand certaines actions importantes ont lieu.
+Il y a deux groupes de crochets : ceux côté client et ceux côté serveur.
+Les crochets côté client concernent les opérations de client telles que la validation et la fusion.
+Les crochets côté serveur concernent les opérations de serveur Git telles que la réception de <em>commits</em>.
+Vous pouvez utiliser ces crochets pour toutes sortes de fonctions.</p>
+<section class="sect2" title="Installation d&#8217;un crochet">
+<h3 id="_installation_d_un_crochet">Installation d&#8217;un crochet</h3>
+<p>Les crochets sont tous stockés dans le sous-répertoire <code class="literal">hooks</code> du répertoire Git.
+Dans la plupart des projets, c&#8217;est <code class="literal">.git/hooks</code>.</p>
+<p>Par défaut, Git popule ce répertoire avec quelques scripts d&#8217;exemple déjà utiles par eux-mêmes ; mais ils servent aussi de documentation sur les paramètres de chaque script.
+Tous les exemples sont des scripts shell avec un peu de Perl mais n&#8217;importe quel script exécutable nommé correctement fonctionnera. Vous pouvez les écrire en Ruby ou Python ou ce que vous voudrez.
+Pour les versions de Git postérieures à 1.6, ces fichiers crochet d&#8217;exemple se terminent en <code class="literal">.sample</code> et il faudra les renommer.
+Pour les versions de Git antérieures à 1.6, les fichiers d&#8217;exemple sont nommés correctement mais ne sont pas exécutables.</p>
+<p>Pour activer un script de crochet, placez un fichier dans le sous-répertoire <code class="literal">hook</code> de votre répertoire Git, nommé correctement et exécutable.
+À partir de ce moment, il devrait être appelé.
+Abordons donc les noms de fichiers de crochet les plus importants.</p>
+</section>
+<section class="sect2" title="Crochets côté client">
+<h3 id="_crochets_côté_client">Crochets côté client</h3>
+<p>Il y a de nombreux crochets côté client.
+Ce chapitre les classe entre crochets de traitement de validation, scripts de traitement par courriel et le reste des scripts côté client.</p>
+<aside class="admonition note" title="Note" epub:type="note">
+<div class="content">
+<p>Il est important de noter que les crochets côté client <em>ne sont pas</em> copiés quand le dépôt est cloné.
+Si vous avez l&#8217;intention d&#8217;utiliser ces scripts pour faire respecter une politique de validation, il vaut mieux utiliser des crochets côté serveur, comme <a href="#s_an_example_git_enforced_policy" class="xref">Exemple de politique gérée par Git</a>.</p>
+</div>
+</aside>
+<section class="sect3" title="Crochets de traitement de validation">
+<h4 id="_crochets_de_traitement_de_validation">Crochets de traitement de validation</h4>
+<p>Les quatre premiers crochets ont trait au processus de validation.</p>
+<p>Le crochet <code class="literal">pre-commit</code> est lancé en premier, avant même que vous ne saisissiez le message de validation.
+Il est utilisé pour inspecter l&#8217;instantané qui est sur le point d&#8217;être validé, pour vérifier si vous avez oublié quelque chose, pour s&#8217;assurer que les tests passent ou pour examiner ce que vous souhaitez inspecter dans le code.
+Un code de sortie non nul de ce crochet annule la validation, bien que vous puissiez le contourner avec <code class="literal">git commit --no-verify</code>.
+Vous pouvez réaliser des actions telles qu&#8217;une vérification de style (en utilisant lint ou un équivalent), d&#8217;absence de blancs en fin de ligne (le crochet par défaut fait exactement cela) ou de documentation des nouvelles méthodes.</p>
+<p>Le crochet <code class="literal">prepare-commit-msg</code> est appelé avant que l&#8217;éditeur de message de validation ne soit lancé mais après que le message par défaut a été créé.
+Il vous permet d&#8217;éditer le message par défaut avant que l&#8217;auteur ne le voit.
+Ce crochet accepte quelques options : le chemin du fichier qui contient le message de validation actuel, le type de validation et le SHA-1 du <em>commit</em> si c&#8217;est un <em>commit</em> amendé.
+Ce crochet ne sert généralement à rien pour les validations normales.
+Par contre, il est utile pour les validations où le message par défaut est généré, tel que les modèles de message de validation, les validations de fusion, les <em>commits</em> écrasés ou amendés.
+Vous pouvez l&#8217;utiliser en conjonction avec un modèle de messages pour insérer de l&#8217;information par programme.</p>
+<p>Le crochet <code class="literal">commit-msg</code> accepte un paramètre qui est encore le chemin du fichier temporaire qui contient le message de validation actuel.
+Si ce script sort avec un code de sortie non nul, Git abandonne le processus de validation, ce qui vous permet de vérifier l&#8217;état de votre projet ou du message de validation avant de laisser passer un <em>commit</em>.
+Dans la dernière section de ce chapitre, l&#8217;utilisation de ce crochet permettra de vérifier que le message de validation est conforme à un format obligatoire.</p>
+<p>Après l&#8217;exécution du processus complet de validation, le crochet <code class="literal">post-commit</code> est appelé.
+Il n&#8217;accepte aucun argument mais vous pouvez facilement accéder au dernier <em>commit</em> grâce à <code class="literal">git log -1 HEAD</code>.
+Généralement, ce script sert à réaliser des notifications ou des choses similaires.</p>
+</section>
+<section class="sect3" title="Crochets de gestion courriel">
+<h4 id="s_email_hooks">Crochets de gestion courriel</h4>
+<p>Vous pouvez régler trois crochets côté client pour la gestion à base de courriel.
+Ils sont tous invoqués par la commande <code class="literal">git am</code>, donc si vous n&#8217;êtes pas habitué à utiliser cette commande dans votre mode de gestion, vous pouvez simplement passer la prochaine section.
+Si vous acceptez des patchs préparés par <code class="literal">git format-patch</code> par courriel, alors certains de ces crochets peuvent vous être très utiles.</p>
+<p>Le premier crochet lancé est <code class="literal">applypatch-msg</code>.
+Il accepte un seul argument : le nom du fichier temporaire qui contient le message de validation proposé.
+Git abandonne le patch si ce script sort avec un code non nul.
+Vous pouvez l&#8217;utiliser pour vérifier que le message de validation est correctement formaté ou pour normaliser le message en l&#8217;éditant sur place par script.</p>
+<p>Le crochet lancé ensuite lors de l&#8217;application de patchs via <code class="literal">git am</code> s&#8217;appelle <code class="literal">pre-applypatch</code>.
+Il n&#8217;accepte aucun argument et son nom est trompeur car il est lancé après que le patch a été appliqué, ce qui vous permet d&#8217;inspecter l&#8217;instantané avant de réaliser la validation.
+Vous pouvez lancer des tests ou inspecter l&#8217;arborescence active avec ce script.
+S&#8217;il manque quelque chose ou que les tests ne passent pas, un code de sortie non nul annule la commande <code class="literal">git am</code> sans valider le patch.</p>
+<p>Le dernier crochet lancé pendant l&#8217;opération <code class="literal">git am</code> s&#8217;appelle <code class="literal">post-applypatch</code>.
+Vous pouvez l&#8217;utiliser pour notifier un groupe ou l&#8217;auteur du patch que vous venez de l&#8217;appliquer.
+Vous ne pouvez plus arrêter le processus de validation avec ce script.</p>
+</section>
+<section class="sect3" title="Autres crochets côté client">
+<h4 id="s_other_client_hooks">Autres crochets côté client</h4>
+<p>Le crochet <code class="literal">pre-rebase</code> est invoqué avant que vous ne rebasiez et peut interrompre le processus s&#8217;il sort avec un code d&#8217;erreur non nul.
+Vous pouvez utiliser ce crochet pour empêcher de rebaser tout <em>commit</em> qui a déjà été poussé.
+C&#8217;est ce que fait le crochet d&#8217;exemple <code class="literal">pre-rebase</code> que Git installe, même s&#8217;il fait des hypothèses qui peuvent ne pas correspondre avec votre façon de faire.</p>
+<p>Le crochet <code class="literal">post-rewrite</code> est lancé par les commandes qui remplacent les <em>commits</em>, comme <code class="literal">git commit --amend</code> et <code class="literal">git rebase</code> (mais pas par <code class="literal">git filter-branch</code>).
+Son seul argument est la commande qui a déclenché la réécriture, et il reçoit une liste de réécritures sur <code class="literal">stdin</code>.
+Ce crochet a beaucoup des mêmes utilisations que les crochets <code class="literal">post-checkout</code> et <code class="literal">post-merge</code>.</p>
+<p>Après avoir effectué avec succès un <code class="literal">git checkout</code>, le crochet <code class="literal">post-checkout</code> est lancé.
+Vous pouvez l&#8217;utiliser pour paramétrer correctement votre environnement projet dans votre copie de travail.
+Cela peut signifier y déplacer des gros fichiers binaires que vous ne souhaitez pas voir en gestion de source, générer automatiquement la documentation ou quelque chose dans le genre.</p>
+<p>Le crochet <code class="literal">post-merge</code> s&#8217;exécute à la suite d&#8217;une commande <code class="literal">merge</code> réussie.
+Vous pouvez l&#8217;utiliser pour restaurer certaines données non gérées par Git dans la copie de travail telles que les informations de permission.
+Ce crochet permet même de valider la présence de fichiers externes au contrôle de Git que vous pourriez souhaiter voir recopiés lorsque la copie de travail change.</p>
+<p>Le crochet <code class="literal">pre-push</code> est lancé pendant un <code class="literal">git push</code>, après la mise à jour des références distantes mais avant le transfert des objets.
+Il reçoit le nom et l&#8217;emplacement du dépôt distant en paramètre et une liste des références qui seront mises à jour sur <code class="literal">stdin</code>.
+Il peut servir à valider un ensemble de mises à jour de références avant que la poussée n&#8217;ait réellement lieu (la poussée est abandonnée sur un code de sortie non nul).</p>
+<p>Git lance de temps à autre le ramasse-miettes au cours de son fonctionnement en invoquant <code class="literal">git gc --auto</code>.
+Le crochet <code class="literal">pre-auto-gc</code> est invoqué juste avant le démarrage du ramasse-miettes et peut être utilisé pour vous en notifier ou pour annuler le ramasse-miettes si le moment ne s&#8217;y prête pas.</p>
+</section>
+</section>
+<section class="sect2" title="Crochets côté serveur">
+<h3 id="_crochets_côté_serveur">Crochets côté serveur</h3>
+<p>En complément des crochets côté client, vous pouvez utiliser comme administrateur système quelques crochets côté serveur pour appliquer quasiment toutes les règles de votre projet.
+Ces scripts s&#8217;exécutent avant et après chaque poussée sur le serveur.
+Les crochets <code class="literal">pre</code> peuvent rendre un code d&#8217;erreur non nul à tout moment pour rejeter la poussée et afficher un message d&#8217;erreur au client.
+Vous pouvez mettre en place des règles aussi complexes que vous le souhaitez.</p>
+<section class="sect3" title="pre-receive">
+<h4 id="_code_class_literal_pre_receive_code"><code class="literal">pre-receive</code></h4>
+<p>Le premier script lancé lors de la gestion d&#8217;une poussée depuis un client est <code class="literal">pre-receive</code>.
+Il accepte une liste de références lues sur <em>stdin</em>.
+S&#8217;il sort avec un code d&#8217;erreur non nul, aucune n&#8217;est acceptée.
+Vous pouvez utiliser ce crochet pour réaliser des tests tels que s&#8217;assurer que toutes les références mises à jour le sont en avance rapide ou pour s&#8217;assurer que l&#8217;utilisateur dispose bien des droits de création, poussée, destruction ou de lecture des mises à jour pour tous les fichiers qu&#8217;il cherche à mettre à jour dans cette poussée.</p>
+</section>
+<section class="sect3" title="update">
+<h4 id="_code_class_literal_update_code"><code class="literal">update</code></h4>
+<p>Le script <code class="literal">update</code> est très similaire au script <code class="literal">pre-receive</code>, à la différence qu&#8217;il est lancé une fois par branche qui doit être modifiée lors de la poussée.
+Si la poussée s&#8217;applique à plusieurs branches, <code class="literal">pre-receive</code> n&#8217;est lancé qu&#8217;une fois, tandis qu'<code class="literal">update</code> est lancé une fois par branche impactée.
+Au lieu de lire à partir de stdin, ce script accepte trois arguments : le nom de la référence (branche), le SHA-1 du <em>commit</em> pointé par la référence avant la poussée et le SHA-1 que l&#8217;utilisateur est en train de pousser.
+Si le script <code class="literal">update</code> se termine avec un code d&#8217;erreur non nul, seule la référence est rejetée.
+Les autres références pourront être mises à jour.</p>
+</section>
+<section class="sect3" title="post-receive">
+<h4 id="_code_class_literal_post_receive_code"><code class="literal">post-receive</code></h4>
+<p>Le crochet <code class="literal">post-receive</code> est lancé après l&#8217;exécution complète du processus et peut être utilisé pour mettre à jour d&#8217;autres services ou pour notifier des utilisateurs.
+Il accepte les mêmes données sur <em>stdin</em> que <code class="literal">pre-receive</code>.
+Il peut par exemple envoyer un courriel à une liste de diffusion, notifier un serveur d&#8217;intégration continue ou mettre à jour un système de suivi de tickets.
+Il peut aussi analyser les messages de validation à la recherche d&#8217;ordres de mise à jour de l&#8217;état des tickets.
+Ce script ne peut pas arrêter le processus de poussée mais le client n&#8217;est pas déconnecté tant qu&#8217;il n&#8217;a pas terminé.
+Il faut donc être prudent à ne pas essayer de lui faire réaliser des actions qui peuvent durer longtemps.</p>
+</section>
+</section>
+</section>
+<section class="sect1" title="Exemple de politique gérée par Git">
+<h2 id="s_an_example_git_enforced_policy">Exemple de politique gérée par Git</h2>
+<p>
+Dans ce chapitre, nous allons utiliser ce que nous venons d&#8217;apprendre pour installer une gestion Git qui vérifie la présence d&#8217;un format personnalisé de message de validation, n&#8217;autorise que les poussées en avance rapide et autorise seulement certains utilisateurs à modifier certains sous-répertoires dans un projet.
+Nous construirons des scripts client pour informer les développeurs que leurs poussées vont être rejetées et des scripts sur le serveur pour mettre effectivement en place ces règles.</p>
+<p>Nous utilisons Ruby pour les écrire, d&#8217;abord par inertie intellectuelle, ensuite parce que ce langage de script s&#8217;apparente le plus à du pseudo-code.
+Ainsi, il devrait être simple de suivre grossièrement le code même sans connaître le langage Ruby.
+Cependant, tout langage peut être utilisé.
+Tous les scripts d&#8217;exemple distribués avec Git sont soit en Perl soit en Bash, ce qui donne de nombreux autres exemples de crochets dans ces langages.</p>
+<section class="sect2" title="Crochet côté serveur">
+<h3 id="_crochet_côté_serveur">Crochet côté serveur</h3>
+<p>Toutes les actions côté serveur seront contenues dans le fichier <code class="literal">update</code> dans le répertoire <code class="literal">hooks</code>.
+Le fichier <code class="literal">update</code> s&#8217;exécute une fois par branche poussée et accepte trois paramètres :</p>
+<div class="itemized-list">
+<ul>
+<li>
+<span class="principal">la référence sur laquelle on pousse</span>
+</li>
+<li>
+<span class="principal">l&#8217;ancienne révision de la branche</span>
+</li>
+<li>
+<span class="principal">la nouvelle révision de la branche.</span>
+</li>
+</ul>
+</div>
+<p>Vous pouvez aussi avoir accès à l&#8217;utilisateur qui pousse si la poussée est réalisée par SSH.
+Si vous avez permis à tout le monde de se connecter avec un utilisateur unique (comme « git ») avec une authentification à clé publique, il vous faudra fournir à cet utilisateur une enveloppe de shell qui déterminera l&#8217;identité de l&#8217;utilisateur à partir de sa clé publique et positionnera une variable d&#8217;environnement spécifiant cette identité.
+Ici, nous considérons que la variable d&#8217;environnement <code class="literal">$USER</code> indique l&#8217;utilisateur connecté, donc le script update commence par rassembler toutes les informations nécessaires :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-style: italic">#!/usr/bin/env ruby</span>
+
+$nomref	      = ARGV[0]
+$anciennerev  = ARGV[1]
+$nouvellerev  = ARGV[2]
+$utilisateur  = ENV[<span style="font-style: italic">&#39;USER&#39;</span>]
+
+puts <span style="font-style: italic">&quot;Vérification des règles...&quot;</span>
+puts <span style="font-style: italic">&quot;(</span><span style="font-weight: bold; font-style: italic">#{</span>$nomref<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">) (</span><span style="font-weight: bold; font-style: italic">#{</span>$anciennerev[0,6]<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">) (</span><span style="font-weight: bold; font-style: italic">#{</span>$nouvellerev[0,6]<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">)&quot;</span></code></pre>
+</figure>
+<p>Oui, ce sont des variables globales.
+C&#8217;est seulement pour simplifier la démonstration.</p>
+<section class="sect3" title="Application d&#8217;une politique de format du message de validation">
+<h4 id="s_enforcing_commit_message_format">Application d&#8217;une politique de format du message de validation</h4>
+<p>Notre première tâche consiste à forcer que chaque message de validation adhère à un format particulier.
+En guise d&#8217;objectif, obligeons chaque message à contenir une chaîne de caractère qui ressemble à « ref: 1234 » parce que nous souhaitons que chaque validation soit liée à une tâche de notre système de tickets.
+Nous devons donc inspecter chaque <em>commit</em> poussé, vérifier la présence de la chaîne et sortir avec un code non-nul en cas d&#8217;absence pour rejeter la poussée.</p>
+<p>Vous pouvez obtenir une liste des valeurs SHA-1 de tous les <em>commits</em> en cours de poussée en passant les valeurs <code class="literal">$nouvellerev</code> et <code class="literal">$anciennerev</code> à une commande de plomberie Git appelée <code class="literal">git rev-list</code>.
+C&#8217;est comme la commande <code class="literal">git log</code> mais elle n&#8217;affiche par défaut que les valeurs SHA-1, sans autre information.
+Donc, pour obtenir une liste de tous les SHA-1 des <em>commits</em> introduits entre un SHA de <em>commit</em> et un autre, il suffit de lancer quelque chose comme :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git rev-list 538c33..d14fc7
+d14fc7c847ab946ec39590d87783c69b031bdfb7
+9f585da4401b0a3999e84113824d15245c13f0be
+234071a1be950e2a8d078e6141f5cd20c1e61ad3
+dfa04c9ef3d5197182f13fb5b9b1fb7717d2222a
+17716ec0f1ff5c77eff40b7fe912f9f6cfd0e475</code></pre>
+</figure>
+<p>Vous pouvez récupérer la sortie, boucler sur chacun de ces SHA-1 de <em>commit</em>, en extraire le message et le tester par rapport à une expression régulière qui cherche un patron.</p>
+<p>Vous devez trouver comment extraire le message de validation à partir de chacun des <em>commits</em> à tester.
+Pour accéder aux données brutes du <em>commit</em>, vous pouvez utiliser une autre commande de plomberie appelée <code class="literal">git cat-file</code>.
+Nous traiterons en détail toutes ces commandes de plomberie dans <a id="xref--ch10-git-internals" href="ch10-git-internals.xhtml" class="xref">Les tripes de Git</a> mais pour l&#8217;instant, voici ce que cette commande affiche :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git cat-file commit ca82a6
+tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+parent 085bb3bcb608e1e8451d4b2432f8ecbe6306e7e7
+author Scott Chacon &lt;schacon@gmail.com&gt; 1205815931 -0700
+committer Scott Chacon &lt;schacon@gmail.com&gt; 1240030591 -0700
+
+changed the version number</code></pre>
+</figure>
+<p>Un moyen simple d&#8217;extraire le message de validation d&#8217;un <em>commit</em> à partir de son SHA-1 consiste à rechercher la première ligne vide et à sélectionner tout ce qui suit.
+Cela peut être facilement réalisé avec la commande <code class="literal">sed</code> sur les systèmes Unix :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git cat-file commit ca82a6 | sed <span style="font-style: italic">&#39;1,/^$/d&#39;</span>
+changed the version number</code></pre>
+</figure>
+<p>Vous pouvez utiliser cette ligne pour récupérer le message de validation de chaque <em>commit</em> en cours de poussée et sortir si quelque chose ne correspond pas à ce qui est attendu.
+Pour sortir du script et rejeter la poussée, il faut sortir avec un code non nul.
+La fonction complète ressemble à ceci :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span>$regex = <span style="font-style: italic">/\[ref: (\d+)\]/</span>
+
+<span style="font-style: italic"># vérification du format des messages de validation</span>
+<span style="font-weight: bold">def</span> verif_format_message
+  revs_manquees = <span style="font-style: italic">`git rev-list </span><span style="font-weight: bold; font-style: italic">#{</span>$anciennerev<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">..</span><span style="font-weight: bold; font-style: italic">#{</span>$nouvellerev<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">`</span>.split(<span style="font-style: italic">&quot;</span><span style="font-weight: bold; font-style: italic">\n</span><span style="font-style: italic">&quot;</span>)
+  revs_manquees.each <span style="font-weight: bold">do</span> |rev|
+    message = <span style="font-style: italic">`git cat-file commit </span><span style="font-weight: bold; font-style: italic">#{</span>rev<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic"> | sed &#39;1,/^$/d&#39;`</span>
+    <span style="font-weight: bold">if</span> !$regex.match(message)
+      puts <span style="font-style: italic">&quot;[REGLE] Le message de validation n&#39;est pas conforme&quot;</span>
+      exit 1
+    <span style="font-weight: bold">end</span>
+  <span style="font-weight: bold">end</span>
+<span style="font-weight: bold">end</span>
+verif_format_message</code></pre>
+</figure>
+<p>Placer ceci dans un script <code class="literal">update</code> rejettera les mises à jour contenant des <em>commits</em> dont les messages ne suivent pas la règle.</p>
+</section>
+<section class="sect3" title="Mise en place d&#8217;un système d&#8217;ACL par utilisateur">
+<h4 id="_mise_en_place_d_un_système_d_acl_par_utilisateur">Mise en place d&#8217;un système d&#8217;ACL par utilisateur</h4>
+<p>Supposons que vous souhaitiez ajouter un mécanisme à base de liste de contrôle d&#8217;accès (access control list : ACL) qui permette de spécifier quel utilisateur a le droit de pousser des modifications vers quelle partie du projet.
+Certaines personnes ont un accès complet tandis que d&#8217;autres n&#8217;ont accès que pour mettre à jour certains sous-répertoires ou certains fichiers.
+Pour faire appliquer ceci, nous allons écrire ces règles dans un fichier appelé <code class="literal">acl</code> situé dans le dépôt brut Git sur le serveur.
+Le crochet <code class="literal">update</code> examinera ces règles, listera les fichiers impactés par la poussée et déterminera si l&#8217;utilisateur qui pousse a effectivement les droits nécessaires sur ces fichiers.</p>
+<p>Écrivons en premier le fichier d&#8217;ACL.
+Nous allons utiliser un format très proche de celui des ACL de CVS.
+Le fichier est composé de lignes dont le premier champ est <code class="literal">avail</code> ou <code class="literal">unavail</code>, le second est une liste des utilisateurs concernés séparés par des virgules et le dernier champ indique le chemin pour lequel la règle s&#8217;applique (le champ vide indiquant une règle générale).
+Tous les champs sont délimités par un caractère pipe « | ».</p>
+<p>Dans notre cas, il y a quelques administrateurs, des auteurs de documentation avec un accès au répertoire <code class="literal">doc</code> et un développeur qui n&#8217;a accès qu&#8217;aux répertoires <code class="literal">lib</code> et <code class="literal">tests</code>.
+Le fichier ACL ressemble donc à ceci :</p>
+<figure class="listing">
+<pre class="source language-"><code>avail|nickh,pjhyett,defunkt,tpw
+avail|usinclair,cdickens,ebronte|doc
+avail|schacon|lib
+avail|schacon|tests</code></pre>
+</figure>
+<p>Le traitement consiste à lire le fichier dans une structure utilisable.
+Dans notre cas, pour simplifier, nous ne traiterons que les directives <code class="literal">avail</code>.
+Voici une fonction qui crée à partir du fichier un tableau associatif dont la clé est l&#8217;utilisateur et la valeur est une liste des chemins pour lesquels l&#8217;utilisateur a les droits en écriture :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-weight: bold">def</span> get_acl_access_data(nom_fichier_acl)
+  <span style="font-style: italic"># Lire le fichier ACL</span>
+  fichier_acl = File.read(nom_fichier_acl).split(<span style="font-style: italic">&quot;</span><span style="font-weight: bold; font-style: italic">\n</span><span style="font-style: italic">&quot;</span>).reject { |line| line == <span style="font-style: italic">&#39;&#39;</span> }
+  acces = {}
+  fichier_acl.each <span style="font-weight: bold">do</span> |line|
+    avail, utilisateurs, chemin = line.split(<span style="font-style: italic">&#39;|&#39;</span>)
+    <span style="font-weight: bold">next</span> <span style="font-weight: bold">unless</span> avail == <span style="font-style: italic">&#39;avail&#39;</span>
+    utilisateurs.split(<span style="font-style: italic">&#39;,&#39;</span>).each <span style="font-weight: bold">do</span> |utilisateur|
+      access[utilisateur] ||= []
+      access[utilisateur] &lt;&lt; chemin
+    <span style="font-weight: bold">end</span>
+  <span style="font-weight: bold">end</span>
+  acces
+<span style="font-weight: bold">end</span></code></pre>
+</figure>
+<p>Pour le fichier d&#8217;ACL décrit plus haut, la fonction <code class="literal">get_acl_access_data</code> retourne une structure de données qui ressemble à ceci :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span>{<span style="font-style: italic">&quot;defunkt&quot;</span>=&gt;[<span style="font-weight: bold">nil</span>],
+ <span style="font-style: italic">&quot;tpw&quot;</span>=&gt;[<span style="font-weight: bold">nil</span>],
+ <span style="font-style: italic">&quot;nickh&quot;</span>=&gt;[<span style="font-weight: bold">nil</span>],
+ <span style="font-style: italic">&quot;pjhyett&quot;</span>=&gt;[<span style="font-weight: bold">nil</span>],
+ <span style="font-style: italic">&quot;schacon&quot;</span>=&gt;[<span style="font-style: italic">&quot;lib&quot;</span>, <span style="font-style: italic">&quot;tests&quot;</span>],
+ <span style="font-style: italic">&quot;cdickens&quot;</span>=&gt;[<span style="font-style: italic">&quot;doc&quot;</span>],
+ <span style="font-style: italic">&quot;usinclair&quot;</span>=&gt;[<span style="font-style: italic">&quot;doc&quot;</span>],
+ <span style="font-style: italic">&quot;ebronte&quot;</span>=&gt;[<span style="font-style: italic">&quot;doc&quot;</span>]}</code></pre>
+</figure>
+<p>En plus des permissions, il faut déterminer les chemins impactés par la poussée pour s&#8217;assurer que l&#8217;utilisateur a bien droit d&#8217;y toucher.</p>
+<p>La liste des fichiers modifiés est assez simplement obtenue par la commande <code class="literal">git log</code> complétée par l&#8217;option <code class="literal">--name-only</code> mentionnée dans <a id="xref--ch02-git-basics--s_log_options" href="ch02-git-basics.xhtml#s_log_options" class="xref">Options usuelles de <code class="literal">git log</code></a> :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git log -1 --name-only --pretty=format:<span style="font-style: italic">&#39;&#39;</span> 9f585d
+
+README
+lib/test.rb</code></pre>
+</figure>
+<p>Chaque fichier des <em>commits</em> doit être vérifié par rapport à la structure ACL retournée par la fonction <code class="literal">get_acl_access_data</code> pour déterminer si l&#8217;utilisateur a le droit de pousser tous ses <em>commits</em> :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-style: italic"># permission à certains utilisateurs de modifier certains sous-répertoires du projet</span>
+<span style="font-weight: bold">def</span> verif_perms_repertoire
+  acces = get_acl_access_data(<span style="font-style: italic">&#39;acl&#39;</span>)
+
+  <span style="font-style: italic"># verifier si quelqu&#39;un cherche à pousser où il n&#39;a pas le droit</span>
+  nouveaux_commits = <span style="font-style: italic">`git rev-list </span><span style="font-weight: bold; font-style: italic">#{</span>$anciennerev<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">..</span><span style="font-weight: bold; font-style: italic">#{</span>$nouvellerev<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">`</span>.split(<span style="font-style: italic">&quot;</span><span style="font-weight: bold; font-style: italic">\n</span><span style="font-style: italic">&quot;</span>)
+  nouveaux_commits.each <span style="font-weight: bold">do</span> |rev|
+    fichiers_modifies = <span style="font-style: italic">`git log -1 --name-only --pretty=format:&#39;&#39; </span><span style="font-weight: bold; font-style: italic">#{</span>rev<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">`</span>.split(<span style="font-style: italic">&quot;</span><span style="font-weight: bold; font-style: italic">\n</span><span style="font-style: italic">&quot;</span>)
+    fichiers_modifies.each <span style="font-weight: bold">do</span> |chemin|
+      <span style="font-weight: bold">next</span> <span style="font-weight: bold">if</span> chemin.size == 0
+      acces_permis = <span style="font-weight: bold">false</span>
+      acces[$utilisateur].each <span style="font-weight: bold">do</span> |chemin_acces|
+        <span style="font-weight: bold">if</span> !chemin_acces || <span style="font-style: italic"># l&#39;utilisateur a un accès complet</span>
+          (chemin.index(chemin_acces) == 0) <span style="font-style: italic"># acces à ce chemin</span>
+          acces_permis = <span style="font-weight: bold">true</span>
+        <span style="font-weight: bold">end</span>
+      <span style="font-weight: bold">end</span>
+      <span style="font-weight: bold">if</span> !acces_permis
+        puts <span style="font-style: italic">&quot;[ACL] Vous n&#39;avez pas le droit de pousser sur </span><span style="font-weight: bold; font-style: italic">#{</span>chemin<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">&quot;</span>
+        exit 1
+      <span style="font-weight: bold">end</span>
+    <span style="font-weight: bold">end</span>
+  <span style="font-weight: bold">end</span>
+<span style="font-weight: bold">end</span>
+
+verif_perms_repertoire</code></pre>
+</figure>
+<p>On récupère la liste des nouveau <em>commits</em> poussés au serveur avec <code class="literal">git rev-list</code>.
+Ensuite, pour chacun des ces commits, on trouve les fichiers modifiés et on s&#8217;assure que l&#8217;utilisateur qui pousse a effectivement droit à l’accès au chemin modifié.</p>
+<p>À présent, les utilisateurs ne peuvent plus pousser de <em>commits</em> comprenant un message incorrectement formaté ou des modifications à des fichiers hors de leur zone réservée.</p>
+</section>
+<section class="sect3" title="Test de la politique">
+<h4 id="_test_de_la_politique">Test de la politique</h4>
+<p>Après avoir lancé un <code class="literal">chmod u+x .git/hooks/update</code>, avec <code class="literal">.git/hooks/update</code> comme fichier dans lequel réside tout ce code, si vous essayez de pousser un <em>commit</em> avec un message de validation non conforme, vous obtiendrez la sortie suivante :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git push -f origin master
+Décompte des objets : 5, fait.
+Compression des objets: 100% (3/3), fait.
+Écriture des objets : 100% (3/3), 323 bytes, fait.
+Total 3 (delta 1), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), fait.
+Vérification des règles...
+(refs/heads/master) (8338c5) (c5b616)
+[REGLE] Le message de validation n&#39;est pas conforme
+error: hooks/update exited with error code 1
+error: hook declined to update refs/heads/master
+To git@gitserver:project.git
+ ! [remote rejected] master -&gt; master (hook declined)
+error: failed to push some refs to &#39;git@gitserver:project.git&#39;</code></pre>
+</figure>
+<p>Il y a plusieurs points à relever ici.
+Premièrement, une ligne indique l&#8217;endroit où le crochet est appelé.</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span>Vérification des règles..
+(refs/heads/master) (fb8c72) (c56860)</code></pre>
+</figure>
+<p>Le script <code class="literal">update</code> affiche ces lignes sur stdout au tout début.
+Tout ce que le script écrit sur stdout sera transmis au client.</p>
+<p>La ligne suivante à remarquer est le message d&#8217;erreur.</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span>[REGLE] Le message de validation n&#39;est pas conforme
+error: hooks/update exited with error code 1
+error: hook declined to update refs/heads/master</code></pre>
+</figure>
+<p>La première ligne a été écrite par le script, les deux autres l&#8217;ont été par Git pour indiquer que le script <code class="literal">update</code> a rendu un code de sortie non nul, ce qui a causé l&#8217;échec de la poussée.
+Enfin, il y a ces lignes :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span>To git@gitserver:project.git
+ ! [remote rejected] master -&gt; master (hook declined)
+error: failed to push some refs to &#39;git@gitserver:project.git&#39;</code></pre>
+</figure>
+<p>Il y a un message d&#8217;échec distant pour chaque référence que le crochet a rejetée et une indication que l&#8217;échec est dû spécifiquement à un échec de crochet.</p>
+<p>Par ailleurs, si quelqu&#8217;un cherche à modifier un fichier auquel il n&#8217;a pas les droits d&#8217;accès lors d&#8217;une poussée, il verra quelque chose de similaire.
+Par exemple, si un auteur de documentation essaie de pousser un <em>commit</em> qui modifie quelque chose dans le répertoire <code class="literal">lib</code>, il verra :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span>[ACL] Vous n&#39;avez pas le droit de pousser sur lib/test.rb</code></pre>
+</figure>
+<p>À partir de maintenant, tant que le script <code class="literal">update</code> est en place et exécutable, votre dépôt ne peut plus subir de poussées hors avancée rapide, n&#8217;accepte plus de messages sans format et vos utilisateurs sont cloîtrés.</p>
+</section>
+</section>
+<section class="sect2" title="Crochets côté client">
+<h3 id="_crochets_côté_client_2">Crochets côté client</h3>
+<p>Le problème de cette approche, ce sont les plaintes des utilisateurs qui résulteront inévitablement des échecs de leurs poussées.
+Leur frustration et leur confusion devant le rejet à la dernière minute d&#8217;un travail minutieux est tout à fait compréhensible.
+De plus, la correction nécessitera  une modification de leur historique, ce qui n&#8217;est pas une partie de plaisir.</p>
+<p>Pour éviter ce scénario, il faut pouvoir fournir aux utilisateurs des crochets côté client qui leur permettront de vérifier que leurs validations seront effectivement acceptées par le serveur.
+Ainsi, ils pourront corriger les problèmes avant de valider et avant que ces difficultés ne deviennent des casse-têtes.
+Ces scripts n&#8217;étant pas diffusés lors du clonage du projet, il vous faudra les distribuer d&#8217;une autre manière, puis indiquer aux utilisateurs de les copier dans leur répertoire <code class="literal">.git/hooks</code> et de les rendre exécutables.
+Vous pouvez distribuer ces crochets au sein du projet ou dans un projet annexe mais il n&#8217;y a aucun moyen de les mettre en place automatiquement.</p>
+<p>Premièrement, pour éviter le rejet du serveur au motif d&#8217;un mauvais format du message de validation, il faut vérifier celui-ci avant que chaque <em>commit</em> ne soit enregistré.
+Pour ce faire, utilisons le crochet <code class="literal">commit-msg</code>.
+En lisant le message à partir du fichier passé en premier argument et en le comparant au format attendu, on peut forcer Git à abandonner la validation en cas d&#8217;absence de correspondance :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-style: italic">#!/usr/bin/env ruby</span>
+fichier_message = ARGV[0]
+message = File.read(fichier_message)
+
+$regex = <span style="font-style: italic">/\[ref: (\d+)\]/</span>
+
+<span style="font-weight: bold">if</span> !$regex.match(message)
+  puts <span style="font-style: italic">&quot;[REGLE] Le message de validation ne suit pas le format&quot;</span>
+  exit 1
+<span style="font-weight: bold">end</span></code></pre>
+</figure>
+<p>Avec ce fichier exécutable et à sa place dans <code class="literal">.git/hooks/commit-msg</code>, si une validation avec un message incorrect est tentée, voici le résultat :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git commit -am <span style="font-style: italic">&#39;test&#39;</span>
+[REGLE] Le message de validation ne suit pas le format</code></pre>
+</figure>
+<p>La validation n&#8217;a pas abouti.
+Néanmoins, si le message contient la bonne forme, Git accepte la validation :</p>
+<figure class="listing">
+<pre class="source language-console"><code><span></span><span style="font-weight: bold">$</span> git commit -am <span style="font-style: italic">&#39;test [ref: 132]&#39;</span>
+[master e05c914] test [ref: 132]
+ 1 file changed, 1 insertions(+), 0 deletions(-)</code></pre>
+</figure>
+<p>Ensuite, il faut s&#8217;assurer des droits sur les fichiers modifiés.
+Si le répertoire <code class="literal">.git</code> du projet contient une copie du fichier d&#8217;ACL précédemment utilisé, alors le script <code class="literal">pre-commit</code> suivant appliquera ses règles :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-style: italic">#!/usr/bin/env ruby</span>
+
+$utilisateur    = ENV[<span style="font-style: italic">&#39;USER&#39;</span>]
+
+<span style="font-style: italic"># [ insérer la fonction acl_access_data method ci-dessus ]</span>
+
+<span style="font-style: italic"># Ne permet qu&#39;à certains utilisateurs de modifier certains sous-répertoires</span>
+<span style="font-weight: bold">def</span> verif_perms_repertoire
+  acces = get_acl_access_data(<span style="font-style: italic">&#39;.git/acl&#39;</span>)
+
+  fichiers_modifies = <span style="font-style: italic">`git diff-index --cached --name-only HEAD`</span>.split(<span style="font-style: italic">&quot;</span><span style="font-weight: bold; font-style: italic">\n</span><span style="font-style: italic">&quot;</span>)
+  fichiers_modifies.each <span style="font-weight: bold">do</span> |chemin|
+    <span style="font-weight: bold">next</span> <span style="font-weight: bold">if</span> chemin.size == 0
+    acces_permis = <span style="font-weight: bold">false</span>
+    acces[$utilisateur].each <span style="font-weight: bold">do</span> |chemin_acces|
+    <span style="font-weight: bold">if</span> !chemin_acces || (chemin.index(chemin_acces) == 0)
+      acces_permis = <span style="font-weight: bold">true</span>
+    <span style="font-weight: bold">end</span>
+    <span style="font-weight: bold">if</span> !acces_permis
+      puts <span style="font-style: italic">&quot;[ACL] Vous n&#39;avez pas le droit de pousser sur </span><span style="font-weight: bold; font-style: italic">#{</span>path<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">&quot;</span>
+      exit 1
+    <span style="font-weight: bold">end</span>
+  <span style="font-weight: bold">end</span>
+<span style="font-weight: bold">end</span>
+
+verif_perms_repertoire</code></pre>
+</figure>
+<p>C&#8217;est grossièrement le même script que celui côté serveur, mais avec deux différences majeures.
+Premièrement, le fichier ACL est à un endroit différent parce que le script s&#8217;exécute depuis la copie de travail et non depuis le répertoire Git.
+Il faut donc changer le chemin vers le fichier d&#8217;ACL de :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span>access = get_acl_access_data(<span style="font-style: italic">&#39;acl&#39;</span>)</code></pre>
+</figure>
+<p>en :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span>access = get_acl_access_data(<span style="font-style: italic">&#39;.git/acl&#39;</span>)</code></pre>
+</figure>
+<p>L&#8217;autre différence majeure réside dans la manière d&#8217;obtenir la liste des fichiers modifiés.
+La fonction sur le serveur la recherche dans le journal des <em>commits</em> mais comme dans le cas actuel, le <em>commit</em> n&#8217;a pas encore été enregistré, il faut chercher la liste dans la zone d&#8217;index.
+Donc au lieu de :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span>files_modified = <span style="font-style: italic">`git log -1 --name-only --pretty=format:&#39;&#39; </span><span style="font-weight: bold; font-style: italic">#{</span>ref<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">`</span></code></pre>
+</figure>
+<p>on utilise :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span>files_modified = <span style="font-style: italic">`git diff-index --cached --name-only HEAD`</span></code></pre>
+</figure>
+<p>Mais à ces deux différences près, le script fonctionne de manière identique.
+Ce script a aussi une autre limitation : il s&#8217;attend à ce que l&#8217;utilisateur qui le lance localement soit identique à celui sur le serveur distant.
+S&#8217;ils sont différents, il faudra positionner manuellement la variable <code class="literal">$utilisateur</code>.</p>
+<p>La dernière action à réaliser consiste à vérifier que les références poussées sont bien en avance rapide, mais l&#8217;inverse est plutôt rare.
+Pour obtenir une référence qui n&#8217;est pas en avance rapide, il faut soit rebaser après un <em>commit</em> qui a déjà été poussé, soit essayer de pousser une branche locale différente vers la même branche distante.</p>
+<p>Par hypothèse, le serveur est déjà configuré avec <code class="literal">receive.denyDeletes</code> et <code class="literal">receive.denyNonFastForwards</code>, donc la seule action accidentelle qu&#8217;il faut intercepter reste le rebasage de <em>commits</em> qui ont déjà été poussés.</p>
+<p>Voici un exemple de script <code class="literal">pre-rebase</code> qui fait cette vérification.
+Ce script récupère une liste de tous les <em>commits</em> qu&#8217;on est sur le point de réécrire et vérifie s&#8217;ils existent dans une référence distante.
+S&#8217;il en trouve un accessible depuis une des références distantes, il interrompt le rebasage :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-style: italic">#!/usr/bin/env ruby</span>
+
+branche_base = ARGV[0]
+<span style="font-weight: bold">if</span> ARGV[1]
+  branche_thematique = ARGV[1]
+<span style="font-weight: bold">else</span>
+  branche_thematique = <span style="font-style: italic">&quot;HEAD&quot;</span>
+<span style="font-weight: bold">end</span>
+
+sha_cibles = <span style="font-style: italic">`git rev-list </span><span style="font-weight: bold; font-style: italic">#{</span>branche_base<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">..</span><span style="font-weight: bold; font-style: italic">#{</span>branche_thematique<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">`</span>.split(<span style="font-style: italic">&quot;</span><span style="font-weight: bold; font-style: italic">\n</span><span style="font-style: italic">&quot;</span>)
+refs_distantes = <span style="font-style: italic">`git branch -r`</span>.split(<span style="font-style: italic">&quot;</span><span style="font-weight: bold; font-style: italic">\n</span><span style="font-style: italic">&quot;</span>).map { |r| r.strip }
+
+shas_cibles.each <span style="font-weight: bold">do</span> |sha|
+  refs_distantes.each <span style="font-weight: bold">do</span> |ref_distante|
+    shas_pousses = <span style="font-style: italic">`git rev-list ^</span><span style="font-weight: bold; font-style: italic">#{</span>sha<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">^@ refs/remotes/</span><span style="font-weight: bold; font-style: italic">#{</span>ref_distante<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">`</span>
+    <span style="font-weight: bold">if</span> shas_pousses.split(<span style="border: 1px solid #FF0000">“</span>\n<span style="border: 1px solid #FF0000">”</span>).include?(sha)
+      puts <span style="font-style: italic">&quot;[REGLE] Le commit </span><span style="font-weight: bold; font-style: italic">#{</span>sha<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic"> a déjà été poussé sur </span><span style="font-weight: bold; font-style: italic">#{</span>ref_distante<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">&quot;</span>
+      exit 1
+    <span style="font-weight: bold">end</span>
+  <span style="font-weight: bold">end</span>
+<span style="font-weight: bold">end</span></code></pre>
+</figure>
+<p>Ce script utilise une syntaxe qui n&#8217;a pas été abordée à la section <a id="xref--ch07-git-tools--s_revision_selection" href="ch07-git-tools.xhtml#s_revision_selection" class="xref">Sélection des versions</a>.
+La liste des <em>commits</em> déjà poussés est obtenue avec cette commande :</p>
+<figure class="listing">
+<pre class="source language-ruby"><code><span></span><span style="font-style: italic">`git rev-list ^</span><span style="font-weight: bold; font-style: italic">#{</span>sha<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">^@ refs/remotes/</span><span style="font-weight: bold; font-style: italic">#{</span>ref_distante<span style="font-weight: bold; font-style: italic">}</span><span style="font-style: italic">`</span>
+.</code></pre>
+</figure>
+<p>La syntaxe <code class="literal">SHA^@</code> fait référence à tous les parents du <em>commit</em>.
+Les <em>commits</em> recherchés sont accessibles depuis le dernier <em>commit</em> distant et inaccessibles depuis n&#8217;importe quel parent de n&#8217;importe quel SHA qu&#8217;on cherche à pousser.
+C&#8217;est la définition d&#8217;avance rapide.</p>
+<p>La limitation de cette approche reste qu&#8217;elle peut s&#8217;avérer très lente et non nécessaire.
+Si vous n&#8217;essayez pas de forcer à pousser avec l&#8217;option <code class="literal">-f</code>, le serveur vous avertira et n&#8217;acceptera pas la poussée.
+Cependant, cela reste un exercice intéressant qui peut aider théoriquement à éviter un rebasage qui devra être annulé plus tard.</p>
+</section>
+</section>
+<section class="sect1" title="Résumé">
+<h2 id="_résumé">Résumé</h2>
+<p>Nous avons traité la plupart des moyens principaux de personnaliser le client et le serveur Git pour mieux l&#8217;adapter à toutes les méthodes et les projets.
+Nous avons couvert toutes sortes de réglages de configurations, d&#8217;attributs dans des fichiers et de crochets d’événement et nous avons construit un exemple de politique de gestion de serveur.
+Vous voilà prêt à adapter Git à quasiment toutes les gestions dont vous avez rêvé.</p>
+</section>
+</section>
+</body>
+</html>
